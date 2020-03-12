@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='ios' display-mode='rendered'>
+    <pages>
+        <page name='Indirection'/>
+        <page name='How-to-implement'/>
+        <page name='Abstraction-indirection-matrix'/>
+        <page name='Direct-Concrete'/>
+        <page name='Indirect-Concrete'/>
+        <page name='Problem-diff-form'/>
+        <page name='Prepare-for-indirection'/>
+        <page name='Add-missing-details'/>
+        <page name='Add-safe-mutation'/>
+        <page name='Problem-form-validation'/>
+        <page name='Prepare-validation-for-indirection'/>
+        <page name='Add-validation-missing-details'/>
+        <page name='Check-form-is-valid'/>
+        <page name='Validation-incremental-changes'/>
+        <page name='Validation-initializer'/>
+        <page name='Summary'/>
+    </pages>
+</playground>

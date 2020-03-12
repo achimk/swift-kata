@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='ios'>
+    <pages>
+        <page name='CardGame'/>
+        <page name='Contact'/>
+        <page name='Payment'/>
+        <page name='Example'/>
+        <page name='Example2'/>
+        <page name='Example3'/>
+        <page name='Example4'/>
+        <page name='Errors'/>
+        <page name='VerifyDocuments'/>
+        <page name='Untitled Page'/>
+    </pages>
+</playground>

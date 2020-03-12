@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
+   <Group
+      location = "container:"
+      name = "Playgrounds">
+      <FileRef
+         location = "group:/Users/joachimkret/projects/swift-kata/State-Driver-App.playground">
+      </FileRef>
+      <FileRef
+         location = "group:Design-Patterns.playground">
+      </FileRef>
+      <FileRef
+         location = "group:/Users/joachimkret/projects/swift-kata/Indirection.playground">
+      </FileRef>
+      <FileRef
+         location = "group:Algorithms.playground">
+      </FileRef>
+      <FileRef
+         location = "group:StablePartition.playground">
+      </FileRef>
+      <FileRef
+         location = "group:Regexp.playground">
+      </FileRef>
+      <FileRef
+         location = "group:FunctionalDDD.playground">
+      </FileRef>
+      <FileRef
+         location = "group:conceptsOfDDD.playground">
+      </FileRef>
+      <FileRef
+         location = "group:Functional.playground">
+      </FileRef>
+      <FileRef
+         location = "group:GameStuff.playground">
+      </FileRef>
+      <FileRef
+         location = "group:GroupTheory.playground">
+      </FileRef>
+   </Group>
    <FileRef
       location = "group:RxFun/RxFun.xcodeproj">
    </FileRef>

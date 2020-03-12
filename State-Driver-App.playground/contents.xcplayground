@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='ios' display-mode='rendered'>
+    <pages>
+        <page name='State-Driven App'/>
+        <page name='Before start (Observables)'/>
+        <page name='Specified Observables'/>
+        <page name='Observable Convertible'/>
+        <page name='Lets build Counter'/>
+        <page name='Counter Observable Sample'/>
+        <page name='Counter Observable Step 1'/>
+        <page name='Counter Observable Step 2'/>
+        <page name='Counter Observable Step 3'/>
+        <page name='Counter View Model Sample'/>
+        <page name='Counter View Model Step 1'/>
+        <page name='Counter View Model Step 2'/>
+        <page name='Counter View Model Step 3'/>
+        <page name='Counter View Model Step 4'/>
+        <page name='Counter View Model Step 5'/>
+        <page name='Counter Tests'/>
+        <page name='Counter Test Case 1'/>
+        <page name='Counter Test Case 2'/>
+        <page name='Before start (FSM)'/>
+        <page name='Finite State Machine'/>
+        <page name='Simple State Transition Diagram'/>
+        <page name='Sample Application'/>
+        <page name='Application State Transitions'/>
+        <page name='State Machine Sample'/>
+        <page name='State Machine Step 1'/>
+        <page name='State Machine Step 2'/>
+        <page name='State Machine Step 3'/>
+        <page name='State Machine Step 4'/>
+        <page name='Search Results Sample'/>
+        <page name='Search Results Step 1'/>
+        <page name='Search Results Step 2'/>
+        <page name='Search Results Step 3'/>
+        <page name='Search Results Step 4'/>
+        <page name='Search Results Step 5'/>
+        <page name='Search Results Step 6'/>
+        <page name='Search Results Step 7'/>
+        <page name='Search Restuls Test Case'/>
+        <page name='Summary'/>
+    </pages>
+</playground>
