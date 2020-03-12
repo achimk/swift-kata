@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:CoreKit/CoreKit.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Staging/Staging.xcodeproj">
    </FileRef>
 </Workspace>
