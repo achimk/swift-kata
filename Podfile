@@ -8,12 +8,15 @@ workspace 'swift-kata'
 def rxapp
   pod 'RxSwift', '~> 5'
   pod 'RxCocoa', '~> 5'
-  pod 'Nimble', '~> 8'
 end
 
 def rxtests
   pod 'RxBlocking', '~> 5'
   pod 'RxTest', '~> 5'
+end
+
+def tests
+  pod 'Nimble', '~> 8'
 end
 
 target 'RxFun' do
@@ -25,6 +28,12 @@ target 'RxFunTests' do
     project 'RxFun/RxFun.xcodeproj'
     rxapp
     rxtests
+    tests
+end
+
+target 'CoreKitTests' do
+    project 'CoreKit/CoreKit.xcodeproj'
+    tests
 end
 
 # post_install do |installer|
