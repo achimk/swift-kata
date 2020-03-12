@@ -1,0 +1,5 @@
+${PODS_ROOT}/Target Support Files/Pods-RxFun/Pods-RxFun-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework
+${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework
+${BUILT_PRODUCTS_DIR}/RxRelay/RxRelay.framework
+${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework
