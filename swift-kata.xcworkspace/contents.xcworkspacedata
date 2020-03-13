@@ -39,6 +39,9 @@
       </FileRef>
    </Group>
    <FileRef
+      location = "group:Persons/Persons.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:RxFun/RxFun.xcodeproj">
    </FileRef>
    <FileRef

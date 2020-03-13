@@ -5,7 +5,7 @@ use_frameworks!
 
 workspace 'swift-kata'
 
-def rxapp
+def rx
   pod 'RxSwift', '~> 5'
   pod 'RxCocoa', '~> 5'
 end
@@ -21,18 +21,30 @@ end
 
 target 'RxFun' do
     project 'RxFun/RxFun.xcodeproj'
-    rxapp
+    rx
 end
 
 target 'RxFunTests' do
     project 'RxFun/RxFun.xcodeproj'
-    rxapp
+    rx
     rxtests
     tests
 end
 
 target 'CoreKitTests' do
     project 'CoreKit/CoreKit.xcodeproj'
+    tests
+end
+
+target 'Persons' do
+    project 'Persons/Persons.xcodeproj'
+    rx
+end
+
+target 'PersonsTests' do
+    project 'Persons/Persons.xcodeproj'
+    rx
+    rxtests
     tests
 end
 
