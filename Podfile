@@ -8,6 +8,7 @@ workspace 'swift-kata'
 def rx
   pod 'RxSwift', '~> 5'
   pod 'RxCocoa', '~> 5'
+  pod 'RxDataSources', '~> 4'
 end
 
 def rxtests
