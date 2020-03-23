@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct PersonId {
+public struct PersonId: Equatable {
     public let value: String
     
     internal init?(_ value: String) {
