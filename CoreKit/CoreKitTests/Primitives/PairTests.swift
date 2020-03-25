@@ -36,4 +36,18 @@ final class PairTests: XCTestCase {
         
         XCTAssertFalse(lhs == rhs)
     }
+    
+    func testEqualWithRightTuple() {
+        let lhs = Pair(1, 2)
+        let rhs = (1, 2)
+        
+        XCTAssertTrue(lhs == rhs)
+    }
+    
+    func testEqualWithLeftTuple() {
+        let lhs = (1, 2)
+        let rhs = Pair(1, 2)
+        
+        XCTAssertTrue(lhs == rhs)
+    }
 }

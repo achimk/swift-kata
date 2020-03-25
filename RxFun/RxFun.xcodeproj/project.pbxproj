@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		275F50F7242B5B3500687AC7 /* HistoryZipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275F50F6242B5B3500687AC7 /* HistoryZipTests.swift */; };
 		2768ED5D2428BF920040D789 /* NumberSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED5C2428BF920040D789 /* NumberSection.swift */; };
 		2768ED5F2428BFC20040D789 /* Randomizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED5E2428BFC20040D789 /* Randomizer.swift */; };
 		2768ED752428C0A30040D789 /* Example1_CustomizationUsingTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED612428C0A30040D789 /* Example1_CustomizationUsingTableViewDelegate.swift */; };
@@ -19,6 +20,7 @@
 		2768ED812428C0A30040D789 /* TitleSwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED712428C0A30040D789 /* TitleSwitchTableViewCell.swift */; };
 		2768ED822428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED722428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift */; };
 		2768ED842428C0A30040D789 /* Example5_UIPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED742428C0A30040D789 /* Example5_UIPickerView.swift */; };
+		27CC7938242AB74E00F2D1A8 /* SignalToSignalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CC7937242AB74E00F2D1A8 /* SignalToSignalTests.swift */; };
 		27E773EA241ABFA0001DC736 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E773E9241ABFA0001DC736 /* AppDelegate.swift */; };
 		27E773EC241ABFA0001DC736 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E773EB241ABFA0001DC736 /* SceneDelegate.swift */; };
 		27E773EE241ABFA0001DC736 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E773ED241ABFA0001DC736 /* ViewController.swift */; };
@@ -42,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		07C8B18E7DF69EE2148BE602 /* Pods-RxFunTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxFunTests.release.xcconfig"; path = "Target Support Files/Pods-RxFunTests/Pods-RxFunTests.release.xcconfig"; sourceTree = "<group>"; };
+		275F50F6242B5B3500687AC7 /* HistoryZipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryZipTests.swift; sourceTree = "<group>"; };
 		2768ED5C2428BF920040D789 /* NumberSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberSection.swift; sourceTree = "<group>"; };
 		2768ED5E2428BFC20040D789 /* Randomizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Randomizer.swift; sourceTree = "<group>"; };
 		2768ED612428C0A30040D789 /* Example1_CustomizationUsingTableViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example1_CustomizationUsingTableViewDelegate.swift; sourceTree = "<group>"; };
@@ -54,6 +57,7 @@
 		2768ED712428C0A30040D789 /* TitleSwitchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleSwitchTableViewCell.swift; sourceTree = "<group>"; };
 		2768ED722428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example4_DifferentSectionAndItemTypes.swift; sourceTree = "<group>"; };
 		2768ED742428C0A30040D789 /* Example5_UIPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example5_UIPickerView.swift; sourceTree = "<group>"; };
+		27CC7937242AB74E00F2D1A8 /* SignalToSignalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalToSignalTests.swift; sourceTree = "<group>"; };
 		27E773E6241ABFA0001DC736 /* RxFun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxFun.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		27E773E9241ABFA0001DC736 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		27E773EB241ABFA0001DC736 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -166,6 +170,8 @@
 			isa = PBXGroup;
 			children = (
 				27E77400241ABFA1001DC736 /* RxFunTests.swift */,
+				27CC7937242AB74E00F2D1A8 /* SignalToSignalTests.swift */,
+				275F50F6242B5B3500687AC7 /* HistoryZipTests.swift */,
 				27E77402241ABFA1001DC736 /* Info.plist */,
 			);
 			path = RxFunTests;
@@ -400,6 +406,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				275F50F7242B5B3500687AC7 /* HistoryZipTests.swift in Sources */,
+				27CC7938242AB74E00F2D1A8 /* SignalToSignalTests.swift in Sources */,
 				27E77401241ABFA1001DC736 /* RxFunTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
