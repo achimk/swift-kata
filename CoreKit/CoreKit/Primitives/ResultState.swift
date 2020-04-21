@@ -1,6 +1,6 @@
 import Foundation
 
-public indirect enum ResultState<Success, Failure> {
+public enum ResultState<Success, Failure> {
     case initial
     case loading
     case success(Success)

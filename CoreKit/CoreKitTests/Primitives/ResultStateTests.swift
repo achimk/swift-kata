@@ -154,3 +154,52 @@ final class ResultStateTests: XCTestCase {
         }
     }
 }
+
+
+extension ResultStateTests {
+    
+    func testRaw() {
+        
+        let items: [ResultStateRaw] = [
+            .success,
+            .success ,
+            .failure,
+            .success,
+            .success
+        ]
+        
+        let reduced = items.reduce(ResultStateRaw.initial, reduce(_:_:))
+        
+        print(reduced)
+    }
+}
+
+extension ResultState where Success == Void {
+    public static var success: ResultState { return ResultState.success(()) }
+}
+
+extension ResultState where Failure == Void {
+    public static var failure: ResultState { return ResultState.failure(()) }
+}
+
+public typealias ResultStateRaw = ResultState<Void, Void>
+
+public func reduce(_ lhs: ResultStateRaw, _ rhs: ResultStateRaw) -> ResultStateRaw {
+    
+    switch (lhs, rhs) {
+    
+    case (.initial, .loading): return .loading
+    case (.loading, .initial): return .loading
+        
+    case (.initial, _): return .initial
+    case (_, .initial): return .initial
+
+    case (.loading, _): return .loading
+    case (_, .loading): return .loading
+    
+    case (.failure, _): return .failure
+    case (_, .failure): return .failure
+    
+    case (.success, .success): return .success
+    }
+}
