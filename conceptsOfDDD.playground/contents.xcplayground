@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <playground version='6.0' target-platform='ios'>
     <pages>
-        <page name='MediatorForAgregator'/>
+        <page name='MediatorForAggregator'/>
         <page name='EditTrackerForPresenter'/>
         <page name='SpecificationForRepository'/>
         <page name='SpecificationForQueryRepository'/>
         <page name='SpecificationAsGenerator'/>
         <page name='UnitOfWork'/>
+        <page name='Strategies'/>
     </pages>
 </playground>
