@@ -9,12 +9,13 @@ import CoreKit
 
 open class ActionStateIndicator<Action, Value>: ObservableConvertibleType {
 
+    public typealias ActionState = (action: Action?, state: ActivityState<Value, Error>)
+    
     private let dispatcher = PublishRelay<(Action, Bool)>()
-    private let state = BehaviorRelay<State>(value: .initial)
+    private let state = BehaviorRelay<ActionState>(value: (nil, .initial))
     private let bag = DisposeBag()
     
-    public typealias State = ActivityState<Value, Swift.Error>
-    public var current: State { return state.value }
+    public var current: ActionState { return state.value }
     
     public init(scheduler: SchedulerType = MainScheduler.instance,
                 reducer: @escaping (Action) -> Single<Value>) {
@@ -26,7 +27,7 @@ open class ActionStateIndicator<Action, Value>: ObservableConvertibleType {
         dispatcher.accept((action, force))
     }
     
-    public func asObservable() -> Observable<State> {
+    public func asObservable() -> Observable<ActionState> {
         return state.asObservable()
     }
     
@@ -34,24 +35,24 @@ open class ActionStateIndicator<Action, Value>: ObservableConvertibleType {
         scheduler: SchedulerType,
         reducer: @escaping (Action) -> Single<Value>) {
         
-        let request = dispatcher
+        let request: Observable<(Action, Bool, ActionState)> = dispatcher
             .observeOn(scheduler)
             .map { [state] (action, force) in
                 return (action, force, state.value)
-            }.filter { (_, force, state) in
-                force || !state.isLoading
+            }.filter { (_, force, current) in
+                force || !current.state.isLoading
             }.share(replay: 1)
         
-        let onLoad = request.flatMap { (_, force, state) -> Observable<State> in
-            if force && state.isLoading { return .never() }
-            return .just(.loading)
+        let onLoad = request.flatMap { (action, force, current) -> Observable<ActionState> in
+            if force && current.state.isLoading { return .never() }
+            return .just((action, .loading))
         }
         
-        let onResult = request.flatMapLatest { (action, _, _) -> Observable<State> in
+        let onResult = request.flatMapLatest { (action, _, _) -> Observable<ActionState> in
             reducer(action)
                 .asObservable()
-                .map { State.success($0) }
-                .catchError { .just(State.failure($0)) }
+                .map { (action, .success($0)) }
+                .catchError { .just((action, .failure($0))) }
         }
         
         Observable

@@ -9,11 +9,12 @@ import CoreKit
 
 open class ActivityStateIndicator<Value>: ObservableConvertibleType {
 
+    public typealias State = ActivityState<Value, Error>
+    
     private let dispatcher = PublishRelay<Bool>()
     private let state = BehaviorRelay<State>(value: .initial)
     private let bag = DisposeBag()
 
-    public typealias State = ActivityState<Value, Error>
     public var current: State { return state.value }
 
     public init(scheduler: SchedulerType = MainScheduler.instance,
