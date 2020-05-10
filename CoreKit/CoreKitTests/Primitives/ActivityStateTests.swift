@@ -7,9 +7,9 @@ import XCTest
 import Nimble
 import CoreKit
 
-final class ResultStateTests: XCTestCase {
+final class ActivityStateTests: XCTestCase {
     
-    typealias State = ResultState<Int, String>
+    typealias State = ActivityState<Int, String>
     
     struct TestError: Error, Equatable { }
     
@@ -135,10 +135,10 @@ final class ResultStateTests: XCTestCase {
     
     func testResultConversion() {
      
-        let initial = ResultState<Int, TestError>.initial
-        let loading = ResultState<Int, TestError>.loading
-        let success = ResultState<Int, TestError>.success(1)
-        let failure = ResultState<Int, TestError>.failure(TestError())
+        let initial = ActivityState<Int, TestError>.initial
+        let loading = ActivityState<Int, TestError>.loading
+        let success = ActivityState<Int, TestError>.success(1)
+        let failure = ActivityState<Int, TestError>.failure(TestError())
         
         expect(initial.result).to(beNil())
         expect(loading.result).to(beNil())
@@ -156,11 +156,11 @@ final class ResultStateTests: XCTestCase {
 }
 
 
-extension ResultStateTests {
+extension ActivityStateTests {
     
     func testRaw() {
         
-        let items: [ResultStateRaw] = [
+        let items: [ActivityStateRaw] = [
             .success,
             .success ,
             .failure,
@@ -168,23 +168,23 @@ extension ResultStateTests {
             .success
         ]
         
-        let reduced = items.reduce(ResultStateRaw.initial, reduce(_:_:))
+        let reduced = items.reduce(ActivityStateRaw.initial, reduce(_:_:))
         
         print(reduced)
     }
 }
 
-extension ResultState where Success == Void {
-    public static var success: ResultState { return ResultState.success(()) }
+extension ActivityState where Success == Void {
+    public static var success: ActivityState { return ActivityState.success(()) }
 }
 
-extension ResultState where Failure == Void {
-    public static var failure: ResultState { return ResultState.failure(()) }
+extension ActivityState where Failure == Void {
+    public static var failure: ActivityState { return ActivityState.failure(()) }
 }
 
-public typealias ResultStateRaw = ResultState<Void, Void>
+public typealias ActivityStateRaw = ActivityState<Void, Void>
 
-public func reduce(_ lhs: ResultStateRaw, _ rhs: ResultStateRaw) -> ResultStateRaw {
+public func reduce(_ lhs: ActivityStateRaw, _ rhs: ActivityStateRaw) -> ActivityStateRaw {
     
     switch (lhs, rhs) {
     

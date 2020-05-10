@@ -1,13 +1,13 @@
 import Foundation
 
-public enum ResultState<Success, Failure> {
+public enum ActivityState<Success, Failure> {
     case initial
     case loading
     case success(Success)
     case failure(Failure)
 }
 
-extension ResultState {
+extension ActivityState {
     
     public var isInitial: Bool {
         if case .initial = self { return true }
@@ -46,7 +46,7 @@ extension ResultState {
     }
 }
 
-extension ResultState {
+extension ActivityState {
     
     public var value: Success? {
         switch self {
@@ -67,7 +67,7 @@ extension ResultState {
     }
 }
 
-extension ResultState where Failure: Swift.Error {
+extension ActivityState where Failure: Swift.Error {
     
     public var result: Result<Success, Failure>? {
         switch self {
@@ -79,9 +79,9 @@ extension ResultState where Failure: Swift.Error {
     }
 }
 
-extension ResultState: Equatable where Success: Equatable, Failure: Equatable {
+extension ActivityState: Equatable where Success: Equatable, Failure: Equatable {
     
-    public static func ==(lhs: ResultState<Success, Failure>, rhs: ResultState<Success, Failure>) -> Bool {
+    public static func ==(lhs: ActivityState<Success, Failure>, rhs: ActivityState<Success, Failure>) -> Bool {
         switch (lhs, rhs) {
         case (.initial, .initial): return true
         case (.loading, .loading): return true

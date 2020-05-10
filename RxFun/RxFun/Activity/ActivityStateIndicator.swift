@@ -1,5 +1,5 @@
 //
-//  Created by Joachim Kret on 21/04/2020.
+//  Created by Joachim Kret on 10/05/2020.
 //  Copyright © 2020 Joachim Kret. All rights reserved.
 //
 
@@ -7,16 +7,13 @@ import RxSwift
 import RxCocoa
 import CoreKit
 
-public typealias ActivityState<Success, Failure> = ResultState<Success, Failure>
-
 open class ActivityStateIndicator<Value>: ObservableConvertibleType {
-
-    public typealias State = ResultState<Value, Error>
 
     private let dispatcher = PublishRelay<Bool>()
     private let state = BehaviorRelay<State>(value: .initial)
-    private var bag = DisposeBag()
+    private let bag = DisposeBag()
 
+    public typealias State = ActivityState<Value, Error>
     public var current: State { return state.value }
 
     public init(scheduler: SchedulerType = MainScheduler.instance,
@@ -46,7 +43,7 @@ open class ActivityStateIndicator<Value>: ObservableConvertibleType {
             }.share(replay: 1)
 
         let onLoad = request.flatMap { (force, state) -> Observable<State> in
-            if force && state.isLoading { return .empty() }
+            if force && state.isLoading { return .never() }
             return .just(.loading)
         }
 
@@ -59,7 +56,7 @@ open class ActivityStateIndicator<Value>: ObservableConvertibleType {
 
         Observable
             .merge(onLoad, onResult)
-            .observeOn(scheduler)
+            .subscribeOn(scheduler)
             .bind(to: state)
             .disposed(by: bag)
     }
