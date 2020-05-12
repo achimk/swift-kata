@@ -7,58 +7,53 @@ import RxSwift
 import RxCocoa
 import CoreKit
 
-open class ActivityStateIndicator<Value>: ObservableConvertibleType {
-
+public final class ActivityStateIndicator<Value>: ObservableConvertibleType {
+ 
     public typealias State = ActivityState<Value, Error>
+    
+    public var current: State { return state.value }
     
     private let dispatcher = PublishRelay<Bool>()
     private let state = BehaviorRelay<State>(value: .initial)
     private let bag = DisposeBag()
-
-    public var current: State { return state.value }
-
-    public init(scheduler: SchedulerType = MainScheduler.instance,
+    
+    public init(scheduler: ImmediateSchedulerType? = nil,
                 reducer: @escaping () -> Single<Value>) {
+        
+        let schedulerFactory = { scheduler.or(else: { MainScheduler() }) }
+        
+        dispatcher
+            .observeOn(schedulerFactory())
+            .map { [state] (force) in
+                return (force, state.value)
+            }
+            .filter { (force, state) in
+                return force || !state.isLoading
+            }
+            .flatMapLatest { (_, state) -> Observable<State> in
+                
+                let start: Observable<State> = state.isLoading
+                    ? .empty()
+                    : .just(.loading)
+                
+                let result: Observable<State> = reducer()
+                    .map(State.success)
+                    .catchError { .just(State.failure($0)) }
+                    .observeOn(schedulerFactory())
+                    .asObservable()
 
-        prepareReduce(scheduler: scheduler, reducer: reducer)
+                return Observable.concat(start, result)
+            }
+            .bind(to: state)
+            .disposed(by: bag)
+            
     }
-
+    
     public func dispatch(force: Bool = false) {
         dispatcher.accept(force)
     }
-
+    
     public func asObservable() -> Observable<State> {
         return state.asObservable()
-    }
-
-    private func prepareReduce(
-        scheduler: SchedulerType,
-        reducer: @escaping () -> Single<Value>) {
-
-        let request = dispatcher
-            .observeOn(scheduler)
-            .map { [state] (force) in
-                return (force, state.value)
-            }.filter { (force, state) in
-                force || !state.isLoading
-            }.share(replay: 1)
-
-        let onLoad = request.flatMap { (force, state) -> Observable<State> in
-            if force && state.isLoading { return .never() }
-            return .just(.loading)
-        }
-
-        let onResult = request.flatMapLatest { (_) -> Observable<State> in
-            return reducer()
-                .asObservable()
-                .map { State.success($0) }
-                .catchError { .just(State.failure($0)) }
-        }
-
-        Observable
-            .merge(onLoad, onResult)
-            .subscribeOn(scheduler)
-            .bind(to: state)
-            .disposed(by: bag)
     }
 }

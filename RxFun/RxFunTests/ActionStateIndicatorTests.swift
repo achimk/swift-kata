@@ -19,20 +19,25 @@ final class ActionStateIndicatorTests: XCTestCase {
         case delete
     }
     
-    func testInitialState() {
+    private let internalQueue = DispatchQueue(label: "internal", qos: .background)
+    private lazy var internalSchedule: SchedulerType = {
+        SerialDispatchQueueScheduler(queue: internalQueue, internalSerialQueueName: "internal")
+    }()
+    
+    func test_initial_state() {
         let indicator = prepareTestActionStateIndicator()
         expect(indicator.current.action.isPresent) == false
         expect(indicator.current.state.isInitial) == true
     }
     
-    func testLoadingState() {
+    func test_loading_state() {
         let indicator = prepareTestActionStateIndicator(shouldLoading: { _ in true })
         indicator.dispatch(.get)
         expect(indicator.current.action) == .get
         expect(indicator.current.state.isLoading) == true
     }
     
-    func testSuccessState() {
+    func test_success_state() {
         let indicator = prepareTestActionStateIndicator()
         indicator.dispatch(.get)
         expect(indicator.current.action) == .get
@@ -42,7 +47,7 @@ final class ActionStateIndicatorTests: XCTestCase {
         }
     }
     
-    func testFailureState() {
+    func test_failure_state() {
         let indicator = prepareTestActionStateIndicator(shouldFailure: { _ in true })
         indicator.dispatch(.get)
         expect(indicator.current.action) == .get
@@ -52,7 +57,7 @@ final class ActionStateIndicatorTests: XCTestCase {
         }
     }
     
-    func testDispatchDuringLoading() {
+    func test_dispatchDuringLoading_shouldIgnoreDispatch() {
         let indicator = prepareTestActionStateIndicator(shouldLoading: { $0 == .get })
         indicator.dispatch(.get)
         indicator.dispatch(.update)
@@ -60,7 +65,7 @@ final class ActionStateIndicatorTests: XCTestCase {
         expect(indicator.current.state.isLoading) == true
     }
     
-    func testForceDispatchDuringLoading() {
+    func test_forceDispatchDuringLoading_shouldDispatch() {
         let indicator = prepareTestActionStateIndicator(shouldLoading: { $0 == .get })
         indicator.dispatch(.get)
         indicator.dispatch(.update, force: true)
@@ -71,22 +76,97 @@ final class ActionStateIndicatorTests: XCTestCase {
         }
     }
     
-    private func prepareTestActionStateIndicator(
-        shouldLoading loadingOnAction: @escaping (Action) -> Bool = { _ in false },
-        shouldFailure failureOnAction: @escaping (Action) -> Bool = { _ in false }) -> ActionStateIndicator<Action, Int> {
+    func test_dispatchInternalSchedule_shouldReturnOnMainSchedule() {
 
-        return ActionStateIndicator<Action, Int>.init { (action) -> Single<Int> in
+        let bag = DisposeBag()
+        let state = prepareTestActionStateIndicator(reduce: { _ in
+            expect(Thread.isMainThread) == true
+            return Single.just(1)
+        })
+
+        waitUntil { [internalQueue] (done) in
+            state.asObservable().subscribe(onNext: { actionState in
+                if actionState.state.isSuccess {
+                    expect(Thread.isMainThread) == true
+                    done()
+                }
+            }).disposed(by: bag)
+
+            internalQueue.async {
+                expect(Thread.isMainThread) == false
+                state.dispatch(.get)
+            }
+        }
+    }
+
+    func test_reduceInternalSchedule_shouldReturnOnMainSchedule() {
+
+        let bag = DisposeBag()
+        let state = prepareTestActionStateIndicator(reduce: { [internalSchedule] _ in
+            expect(Thread.isMainThread) == true
+            return Single
+                .just(1)
+                .observeOn(internalSchedule)
+        })
+
+        waitUntil { (done) in
+            state.asObservable().subscribe(onNext: { actionState in
+                if actionState.state.isSuccess {
+                    expect(Thread.isMainThread) == true
+                    done()
+                }
+            }).disposed(by: bag)
+
+            state.dispatch(.get)
+        }
+    }
+    
+    func test_dispatchAndReduceInternalSchedule_shouldReturnMainSchedule() {
+        
+        let bag = DisposeBag()
+        let state = prepareTestActionStateIndicator(reduce: { [internalSchedule] _ in
+            expect(Thread.isMainThread) == true
+            return Single
+                .just(1)
+                .observeOn(internalSchedule)
+        })
+
+        waitUntil { [internalQueue] (done) in
+            state.asObservable().subscribe(onNext: { actionState in
+                if actionState.state.isSuccess {
+                    expect(Thread.isMainThread) == true
+                    done()
+                }
+            }).disposed(by: bag)
+
+            internalQueue.async {
+                state.dispatch(.get)
+            }
+        }
+    }
+    
+    private func prepareTestActionStateIndicator(
+        scheduler: ImmediateSchedulerType? = nil,
+        shouldLoading loadingOnAction: @escaping (Action) -> Bool = { _ in false },
+        shouldFailure failureOnAction: @escaping (Action) -> Bool = { _ in false },
+        reduce: ((Action) -> Single<Int>)? = nil) -> ActionStateIndicator<Action, Int> {
+
+        let reduce = reduce.or { (action) -> Single<Int> in
+            switch action {
+            case .get: return .just(1)
+            case .update: return .just(2)
+            case .delete: return .just(3)
+            }
+        }
+        
+        return ActionStateIndicator<Action, Int>(scheduler: scheduler) { (action) -> Single<Int> in
             if loadingOnAction(action) {
                 return .never()
             }
             if failureOnAction(action) {
                 return .error(TestError())
             }
-            switch action {
-            case .get: return .just(1)
-            case .update: return .just(2)
-            case .delete: return .just(3)
-            }
+            return reduce(action)
         }
     }
 }
