@@ -48,6 +48,15 @@ extension ActivityState {
 
 extension ActivityState {
     
+    public var stringValue: String {
+        switch self {
+        case .initial: return "initial"
+        case .loading: return "loading"
+        case .success: return "success"
+        case .failure: return "failure"
+        }
+    }
+    
     public var value: Success? {
         switch self {
         case .initial: return nil

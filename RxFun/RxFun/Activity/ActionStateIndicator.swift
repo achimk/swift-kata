@@ -32,9 +32,7 @@ public final class ActionStateIndicator<Action, Value>: ObservableConvertibleTyp
             }
             .flatMapLatest { (action, _, current) -> Observable<ActionState> in
                 
-                let start: Observable<ActionState> = current.state.isLoading
-                    ? .empty()
-                    : .just((action, .loading))
+                let start: Observable<ActionState> = .just((action, .loading))
                 
                 let result: Observable<ActionState> = reducer(action)
                     .map { (action, .success($0)) }

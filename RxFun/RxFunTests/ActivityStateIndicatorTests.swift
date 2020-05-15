@@ -48,6 +48,70 @@ final class ActivityStateIndicatorTests: XCTestCase {
         }
     }
     
+    func test_multiple_states() {
+        var shouldLoading = true
+        var shouldFailure = false
+        
+        let state = prepareTestActivityStateIndicator(
+            shouldLoading: { shouldLoading },
+            shouldFailure: { shouldFailure })
+        
+        state.dispatch()
+        expect(state.current.isLoading) == true
+        
+        shouldLoading = false
+        shouldFailure = true
+        
+        state.dispatch(force: true)
+        expect(state.current.isFailure) == true
+        
+        shouldLoading = false
+        shouldFailure = false
+        
+        state.dispatch()
+        expect(state.current.isSuccess) == true
+    }
+    
+    func test_multipleDispatch_shouldDispatchSequenceInOrder() {
+        
+        let bag = DisposeBag()
+        var states: [String] = []
+        var shouldLoading = true
+        var shouldFailure = false
+        
+        let state = prepareTestActivityStateIndicator(
+            shouldLoading: { shouldLoading },
+            shouldFailure: { shouldFailure })
+        state.asObservable().subscribe(onNext: {
+            states.append($0.stringValue)
+        }).disposed(by: bag)
+            
+        state.dispatch()
+        expect(states) == [
+            "initial",
+            "loading"
+        ]
+        
+        states = []
+        shouldLoading = false
+        shouldFailure = true
+        
+        state.dispatch(force: true)
+        expect(states) == [
+            "failure"
+        ]
+        
+        states = []
+        shouldLoading = false
+        shouldFailure = false
+        
+        state.dispatch()
+        expect(states) == [
+            "loading",
+            "success"
+        ]
+    }
+    
     func test_dispatchDuringLoading_shouldIgnoreDispatch() {
         var call = 0
         let state = prepareTestActivityStateIndicator(shouldLoading: { call += 1; return true })
@@ -57,6 +121,27 @@ final class ActivityStateIndicatorTests: XCTestCase {
         expect(call) == 1
     }
     
+    func test_dispatchDuringLoading_shouldDispatchSequenceInOrder() {
+        
+        let bag = DisposeBag()
+        var isLoading = true
+        var states: [String] = []
+        
+        let indicator = prepareTestActivityStateIndicator(shouldLoading: { isLoading })
+        indicator.asObservable().subscribe(onNext: {
+            states.append($0.stringValue)
+        }).disposed(by: bag)
+        
+        indicator.dispatch()
+        isLoading = false
+        indicator.dispatch()
+        
+        expect(states) == [
+            "initial",
+            "loading"
+        ]
+    }
+    
     func test_forceDispatchDuringLoading_shouldDispatch() {
         var call = 0
         let state = prepareTestActivityStateIndicator(shouldLoading: { call += 1; return true })
@@ -64,6 +149,28 @@ final class ActivityStateIndicatorTests: XCTestCase {
         state.dispatch(force: true)
         expect(state.current.isLoading) == true
         expect(call) == 2
+    }
+    
+    func test_forceDispatchDuringLoading_shouldDispatchSequenceInOrder() {
+        
+        let bag = DisposeBag()
+        var isLoading = true
+        var states: [String] = []
+        
+        let indicator = prepareTestActivityStateIndicator(shouldLoading: { isLoading })
+        indicator.asObservable().subscribe(onNext: {
+            states.append($0.stringValue)
+        }).disposed(by: bag)
+        
+        indicator.dispatch()
+        isLoading = false
+        indicator.dispatch(force: true)
+        
+        expect(states) == [
+            "initial",
+            "loading",
+            "success"
+        ]
     }
     
     func test_dispatchInternalSchedule_shouldReturnOnMainSchedule() {
