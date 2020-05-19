@@ -98,6 +98,7 @@ final class ActivityStateIndicatorTests: XCTestCase {
         
         state.dispatch(force: true)
         expect(states) == [
+            "loading",
             "failure"
         ]
         
@@ -168,6 +169,7 @@ final class ActivityStateIndicatorTests: XCTestCase {
         
         expect(states) == [
             "initial",
+            "loading",
             "loading",
             "success"
         ]

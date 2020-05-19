@@ -8,49 +8,65 @@ import RxCocoa
 import CoreKit
 
 public final class ActivityStateIndicator<Value>: ObservableConvertibleType {
- 
+    
+    enum Action {
+        case load(Bool)
+        case completed(Result<Value, Error>)
+    }
+    
     public typealias State = ActivityState<Value, Error>
     
-    public var current: State { return state.value }
+    public var current: State { return state.current }
     
-    private let dispatcher = PublishRelay<Bool>()
-    private let state = BehaviorRelay<State>(value: .initial)
-    private let bag = DisposeBag()
+    private let state: ActionStateObservable<Action, State>
     
     public init(scheduler: ImmediateSchedulerType? = nil,
-                reducer: @escaping () -> Single<Value>) {
+                sideEffect makeSideEffect: @escaping () -> Single<Value>) {
         
-        let schedulerFactory = { scheduler.or(else: { MainScheduler() }) }
-        
-        dispatcher
-            .observeOn(schedulerFactory())
-            .map { [state] (force) in
-                return (force, state.value)
-            }
-            .filter { (force, state) in
-                return force || !state.isLoading
-            }
-            .flatMapLatest { (_, state) -> Observable<State> in
-                
-                let start: Observable<State> = state.isLoading
-                    ? .empty()
-                    : .just(.loading)
-                
-                let result: Observable<State> = reducer()
-                    .map(State.success)
-                    .catchError { .just(State.failure($0)) }
-                    .observeOn(schedulerFactory())
-                    .asObservable()
-
-                return Observable.concat(start, result)
-            }
-            .bind(to: state)
-            .disposed(by: bag)
+        let reducer: (Action, State) -> State? = { (action, state) in
             
+            switch (action, state) {
+            case (.load, .initial),
+                 (.load, .success),
+                 (.load, .failure):
+                return .loading
+                
+            case (.load(let force), .loading):
+                return force ? .loading : nil
+                
+            case (.completed(let result), .loading):
+                switch result {
+                case .success(let value): return .success(value)
+                case .failure(let error): return .failure(error)
+                }
+                
+            default:
+                return nil
+            }
+        }
+        
+        let sideEffect: (Action, State) -> Single<Action>? = { (action, state) in
+            
+            guard state.isLoading else {
+                return nil
+            }
+            
+            return makeSideEffect()
+                .map(Result.success)
+                .catchError { .just(.failure($0)) }
+                .map(Action.completed)
+        }
+        
+        state = ActionStateObservable(
+            scheduler: scheduler,
+            initialState: .initial,
+            reducer: reducer)
+        
+        state.add(sideEffect: sideEffect)
     }
     
     public func dispatch(force: Bool = false) {
-        dispatcher.accept(force)
+        state.dispatch(.load(force))
     }
     
     public func asObservable() -> Observable<State> {
