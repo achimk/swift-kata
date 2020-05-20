@@ -22,6 +22,7 @@
 		2768ED812428C0A30040D789 /* TitleSwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED712428C0A30040D789 /* TitleSwitchTableViewCell.swift */; };
 		2768ED822428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED722428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift */; };
 		2768ED842428C0A30040D789 /* Example5_UIPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2768ED742428C0A30040D789 /* Example5_UIPickerView.swift */; };
+		2789999024750C7D00DDE18D /* Redux.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2789998F24750C7D00DDE18D /* Redux.swift */; };
 		279447D7243F5CEA00B42436 /* SingleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279447D6243F5CEA00B42436 /* SingleTests.swift */; };
 		279789B3246829D600B4AE23 /* ActivityStateIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279789B2246829D600B4AE23 /* ActivityStateIndicator.swift */; };
 		279789B5246829E500B4AE23 /* ActionStateIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279789B4246829E500B4AE23 /* ActionStateIndicator.swift */; };
@@ -68,6 +69,7 @@
 		2768ED712428C0A30040D789 /* TitleSwitchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleSwitchTableViewCell.swift; sourceTree = "<group>"; };
 		2768ED722428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example4_DifferentSectionAndItemTypes.swift; sourceTree = "<group>"; };
 		2768ED742428C0A30040D789 /* Example5_UIPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example5_UIPickerView.swift; sourceTree = "<group>"; };
+		2789998F24750C7D00DDE18D /* Redux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Redux.swift; sourceTree = "<group>"; };
 		279447D6243F5CEA00B42436 /* SingleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTests.swift; sourceTree = "<group>"; };
 		279789B2246829D600B4AE23 /* ActivityStateIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityStateIndicator.swift; sourceTree = "<group>"; };
 		279789B4246829E500B4AE23 /* ActionStateIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionStateIndicator.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				279789B2246829D600B4AE23 /* ActivityStateIndicator.swift */,
 				279789B4246829E500B4AE23 /* ActionStateIndicator.swift */,
 				27B2390F2473D57200D9F7C4 /* RxStore.swift */,
+				2789998F24750C7D00DDE18D /* Redux.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -439,6 +442,7 @@
 				279789B5246829E500B4AE23 /* ActionStateIndicator.swift in Sources */,
 				27E773EE241ABFA0001DC736 /* ViewController.swift in Sources */,
 				27E773EA241ABFA0001DC736 /* AppDelegate.swift in Sources */,
+				2789999024750C7D00DDE18D /* Redux.swift in Sources */,
 				2768ED5F2428BFC20040D789 /* Randomizer.swift in Sources */,
 				2768ED822428C0A30040D789 /* Example4_DifferentSectionAndItemTypes.swift in Sources */,
 				2768ED842428C0A30040D789 /* Example5_UIPickerView.swift in Sources */,

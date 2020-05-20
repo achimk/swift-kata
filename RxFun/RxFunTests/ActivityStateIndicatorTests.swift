@@ -21,20 +21,20 @@ final class ActivityStateIndicatorTests: XCTestCase {
     
     func test_initial_state() {
         let state = prepareTestActivityStateIndicator()
-        expect(state.current.isInitial) == true
+        expect(state.currentState.isInitial) == true
     }
     
     func test_loading_state() {
         let state = prepareTestActivityStateIndicator(shouldLoading: { true })
         state.dispatch()
-        expect(state.current.isLoading) == true
+        expect(state.currentState.isLoading) == true
     }
     
     func test_success_state() {
         let state = prepareTestActivityStateIndicator()
         state.dispatch()
-        expect(state.current.isSuccess) == true
-        state.current.onSuccess { (value) in
+        expect(state.currentState.isSuccess) == true
+        state.currentState.onSuccess { (value) in
             expect(value) == 1
         }
     }
@@ -42,8 +42,8 @@ final class ActivityStateIndicatorTests: XCTestCase {
     func test_failure_state() {
         let state = prepareTestActivityStateIndicator(shouldFailure: { true })
         state.dispatch()
-        expect(state.current.isFailure) == true
-        state.current.onFailure { (error) in
+        expect(state.currentState.isFailure) == true
+        state.currentState.onFailure { (error) in
             expect(error).to(beAKindOf(TestError.self))
         }
     }
@@ -57,19 +57,19 @@ final class ActivityStateIndicatorTests: XCTestCase {
             shouldFailure: { shouldFailure })
         
         state.dispatch()
-        expect(state.current.isLoading) == true
+        expect(state.currentState.isLoading) == true
         
         shouldLoading = false
         shouldFailure = true
         
         state.dispatch(force: true)
-        expect(state.current.isFailure) == true
+        expect(state.currentState.isFailure) == true
         
         shouldLoading = false
         shouldFailure = false
         
         state.dispatch()
-        expect(state.current.isSuccess) == true
+        expect(state.currentState.isSuccess) == true
     }
     
     func test_multipleDispatch_shouldDispatchSequenceInOrder() {
@@ -118,7 +118,7 @@ final class ActivityStateIndicatorTests: XCTestCase {
         let state = prepareTestActivityStateIndicator(shouldLoading: { call += 1; return true })
         state.dispatch()
         state.dispatch()
-        expect(state.current.isLoading) == true
+        expect(state.currentState.isLoading) == true
         expect(call) == 1
     }
     
@@ -148,7 +148,7 @@ final class ActivityStateIndicatorTests: XCTestCase {
         let state = prepareTestActivityStateIndicator(shouldLoading: { call += 1; return true })
         state.dispatch()
         state.dispatch(force: true)
-        expect(state.current.isLoading) == true
+        expect(state.currentState.isLoading) == true
         expect(call) == 2
     }
     

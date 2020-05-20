@@ -35,23 +35,23 @@ final class ActionStateIndicatorTests: XCTestCase {
     
     func test_initial_state() {
         let indicator = prepareTestActionStateIndicator()
-        expect(indicator.current.action.isPresent) == false
-        expect(indicator.current.state.isInitial) == true
+        expect(indicator.currentState.action.isPresent) == false
+        expect(indicator.currentState.state.isInitial) == true
     }
     
     func test_loading_state() {
         let indicator = prepareTestActionStateIndicator(shouldLoading: { _ in true })
         indicator.dispatch(.get)
-        expect(indicator.current.action) == .get
-        expect(indicator.current.state.isLoading) == true
+        expect(indicator.currentState.action) == .get
+        expect(indicator.currentState.state.isLoading) == true
     }
     
     func test_success_state() {
         let indicator = prepareTestActionStateIndicator()
         indicator.dispatch(.get)
-        expect(indicator.current.action) == .get
-        expect(indicator.current.state.isSuccess) == true
-        indicator.current.state.onSuccess { (value) in
+        expect(indicator.currentState.action) == .get
+        expect(indicator.currentState.state.isSuccess) == true
+        indicator.currentState.state.onSuccess { (value) in
             expect(value) == 1
         }
     }
@@ -59,9 +59,9 @@ final class ActionStateIndicatorTests: XCTestCase {
     func test_failure_state() {
         let indicator = prepareTestActionStateIndicator(shouldFailure: { _ in true })
         indicator.dispatch(.get)
-        expect(indicator.current.action) == .get
-        expect(indicator.current.state.isFailure) == true
-        indicator.current.state.onFailure { (error) in
+        expect(indicator.currentState.action) == .get
+        expect(indicator.currentState.state.isFailure) == true
+        indicator.currentState.state.onFailure { (error) in
             expect(error).to(beAKindOf(TestError.self))
         }
     }
@@ -75,30 +75,30 @@ final class ActionStateIndicatorTests: XCTestCase {
             shouldFailure: { _ in shouldFailure })
         
         indicator.dispatch(.get)
-        expect(indicator.current.action) == .get
-        expect(indicator.current.state.isLoading) == true
+        expect(indicator.currentState.action) == .get
+        expect(indicator.currentState.state.isLoading) == true
         
         shouldLoading = false
         shouldFailure = true
         
         indicator.dispatch(.update, force: true)
-        expect(indicator.current.action) == .update
-        expect(indicator.current.state.isFailure) == true
+        expect(indicator.currentState.action) == .update
+        expect(indicator.currentState.state.isFailure) == true
         
         shouldLoading = false
         shouldFailure = false
         
         indicator.dispatch(.delete)
-        expect(indicator.current.action) == .delete
-        expect(indicator.current.state.isSuccess) == true
+        expect(indicator.currentState.action) == .delete
+        expect(indicator.currentState.state.isSuccess) == true
     }
     
     func test_dispatchDuringLoading_shouldIgnoreDispatch() {
         let indicator = prepareTestActionStateIndicator(shouldLoading: { $0 == .get })
         indicator.dispatch(.get)
         indicator.dispatch(.update)
-        expect(indicator.current.action) == .get
-        expect(indicator.current.state.isLoading) == true
+        expect(indicator.currentState.action) == .get
+        expect(indicator.currentState.state.isLoading) == true
     }
     
     func test_dispatchDuringLoading_shouldDispatchSequenceInOrder() {
@@ -124,9 +124,9 @@ final class ActionStateIndicatorTests: XCTestCase {
         let indicator = prepareTestActionStateIndicator(shouldLoading: { $0 == .get })
         indicator.dispatch(.get)
         indicator.dispatch(.update, force: true)
-        expect(indicator.current.action) == .update
-        expect(indicator.current.state.isSuccess) == true
-        indicator.current.state.onSuccess { (value) in
+        expect(indicator.currentState.action) == .update
+        expect(indicator.currentState.state.isSuccess) == true
+        indicator.currentState.state.onSuccess { (value) in
             expect(value) == 2
         }
     }
