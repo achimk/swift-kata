@@ -147,6 +147,28 @@ final class ActionStateIndicatorTests: XCTestCase {
         expect(actionStates) == [
             .init(nil, "initial"),
             .init(.get, "loading"),
+            .init(.update, "success")
+        ]
+    }
+    
+    func test_forceDispatchDuringLoadingWithoutSkipRepeats_shouldDispatchSequenceInOrder() {
+        
+        let bag = DisposeBag()
+        var actionStates: [ActionState] = []
+        
+        let indicator = prepareTestActionStateIndicator(
+            automaticallySkipsRepeats: false,
+            shouldLoading: { $0 == .get })
+        indicator.asObservable().subscribe(onNext: {
+            actionStates.append(ActionState($0.action, $0.state.stringValue))
+        }).disposed(by: bag)
+        
+        indicator.dispatch(.get)
+        indicator.dispatch(.update, force: true)
+        
+        expect(actionStates) == [
+            .init(nil, "initial"),
+            .init(.get, "loading"),
             .init(.update, "loading"),
             .init(.update, "success")
         ]
@@ -223,6 +245,7 @@ final class ActionStateIndicatorTests: XCTestCase {
     
     private func prepareTestActionStateIndicator(
         scheduler: ImmediateSchedulerType? = nil,
+        automaticallySkipsRepeats skipsRepeats: Bool = true,
         shouldLoading loadingOnAction: @escaping (Action) -> Bool = { _ in false },
         shouldFailure failureOnAction: @escaping (Action) -> Bool = { _ in false },
         reduce: ((Action) -> Single<Int>)? = nil) -> ActionStateIndicator<Action, Int> {
@@ -235,14 +258,17 @@ final class ActionStateIndicatorTests: XCTestCase {
             }
         }
         
-        return ActionStateIndicator<Action, Int>(scheduler: scheduler) { (action) -> Single<Int> in
-            if loadingOnAction(action) {
-                return .never()
-            }
-            if failureOnAction(action) {
-                return .error(TestError())
-            }
-            return reduce(action)
-        }
+        return ActionStateIndicator<Action, Int>(
+            scheduler: scheduler,
+            automaticallySkipsRepeats: skipsRepeats,
+            sideEffect: { (action) -> Single<Int> in
+                if loadingOnAction(action) {
+                    return .never()
+                }
+                if failureOnAction(action) {
+                    return .error(TestError())
+                }
+                return reduce(action)
+            })
     }
 }

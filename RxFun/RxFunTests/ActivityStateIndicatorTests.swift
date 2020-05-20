@@ -311,21 +311,22 @@ final class ActivityStateIndicatorTests: XCTestCase {
     
     private func prepareTestActivityStateIndicator(
         scheduler: ImmediateSchedulerType? = nil,
-        automaticallySkipsRepeats skipRepeats: Bool = true,
+        automaticallySkipsRepeats skipsRepeats: Bool = true,
         shouldLoading loadingOnAction: @escaping () -> Bool = { false },
         shouldFailure failureOnAction: @escaping () -> Bool = { false },
         reduce: @escaping () -> Single<Int> = { .just(1) }) -> ActivityStateIndicator<Int> {
         
         return ActivityStateIndicator(
-        scheduler: scheduler,
-        automaticallySkipsRepeats: skipRepeats) { () -> Single<Int> in
-            if loadingOnAction() {
-                return .never()
-            }
-            if failureOnAction() {
-                return .error(TestError())
-            }
-            return reduce()
-        }
+            scheduler: scheduler,
+            automaticallySkipsRepeats: skipsRepeats,
+            sideEffect: { () -> Single<Int> in
+                if loadingOnAction() {
+                    return .never()
+                }
+                if failureOnAction() {
+                    return .error(TestError())
+                }
+                return reduce()
+            })
     }
 }
