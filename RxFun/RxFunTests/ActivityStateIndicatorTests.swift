@@ -98,6 +98,47 @@ final class ActivityStateIndicatorTests: XCTestCase {
         
         state.dispatch(force: true)
         expect(states) == [
+            "failure"
+        ]
+        
+        states = []
+        shouldLoading = false
+        shouldFailure = false
+        
+        state.dispatch()
+        expect(states) == [
+            "loading",
+            "success"
+        ]
+    }
+    
+    func test_multipleDispatchWithoutSkipRepeats_shouldDispatchSequenceInOrder() {
+        
+        let bag = DisposeBag()
+        var states: [String] = []
+        var shouldLoading = true
+        var shouldFailure = false
+        
+        let state = prepareTestActivityStateIndicator(
+            automaticallySkipsRepeats: false,
+            shouldLoading: { shouldLoading },
+            shouldFailure: { shouldFailure })
+        state.asObservable().subscribe(onNext: {
+            states.append($0.stringValue)
+        }).disposed(by: bag)
+            
+        state.dispatch()
+        expect(states) == [
+            "initial",
+            "loading"
+        ]
+        
+        states = []
+        shouldLoading = false
+        shouldFailure = true
+        
+        state.dispatch(force: true)
+        expect(states) == [
             "loading",
             "failure"
         ]
@@ -159,6 +200,30 @@ final class ActivityStateIndicatorTests: XCTestCase {
         var states: [String] = []
         
         let indicator = prepareTestActivityStateIndicator(shouldLoading: { isLoading })
+        indicator.asObservable().subscribe(onNext: {
+            states.append($0.stringValue)
+        }).disposed(by: bag)
+        
+        indicator.dispatch()
+        isLoading = false
+        indicator.dispatch(force: true)
+        
+        expect(states) == [
+            "initial",
+            "loading",
+            "success"
+        ]
+    }
+    
+    func test_forceDispatchDuringLoadingWithoutSkipRepeats_shouldDispatchSequenceInOrder() {
+        
+        let bag = DisposeBag()
+        var isLoading = true
+        var states: [String] = []
+        
+        let indicator = prepareTestActivityStateIndicator(
+            automaticallySkipsRepeats: false,
+            shouldLoading: { isLoading })
         indicator.asObservable().subscribe(onNext: {
             states.append($0.stringValue)
         }).disposed(by: bag)
@@ -246,11 +311,14 @@ final class ActivityStateIndicatorTests: XCTestCase {
     
     private func prepareTestActivityStateIndicator(
         scheduler: ImmediateSchedulerType? = nil,
+        automaticallySkipsRepeats skipRepeats: Bool = true,
         shouldLoading loadingOnAction: @escaping () -> Bool = { false },
         shouldFailure failureOnAction: @escaping () -> Bool = { false },
         reduce: @escaping () -> Single<Int> = { .just(1) }) -> ActivityStateIndicator<Int> {
         
-        return ActivityStateIndicator(scheduler: scheduler) { () -> Single<Int> in
+        return ActivityStateIndicator(
+        scheduler: scheduler,
+        automaticallySkipsRepeats: skipRepeats) { () -> Single<Int> in
             if loadingOnAction() {
                 return .never()
             }

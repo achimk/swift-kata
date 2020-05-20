@@ -12,15 +12,18 @@ public final class ActivityStateIndicator<Value>: ObservableConvertibleType {
     public typealias State = ActivityState<Value, Error>
     public var currentState: State { return state.value }
     
+    private let automaticallySkipsRepeats: Bool
     private let state = BehaviorRelay<State>(value: .initial)
     private let dispatcher = PublishRelay<Bool>()
     private let bag = DisposeBag()
     
     public init(scheduler: ImmediateSchedulerType? = nil,
+                automaticallySkipsRepeats: Bool = true,
                 sideEffect: @escaping () -> Single<Value>) {
         
         let makeScheduler = { scheduler.or(else: { MainScheduler() })}
-        
+        self.automaticallySkipsRepeats = automaticallySkipsRepeats
+    
         dispatcher
             .observeOn(makeScheduler())
             .withLatestFrom(state) { ($0, $1) }
@@ -44,6 +47,8 @@ public final class ActivityStateIndicator<Value>: ObservableConvertibleType {
     }
     
     public func asObservable() -> Observable<State> {
-        return state.asObservable()
+        return automaticallySkipsRepeats
+            ? state.asObservable().distinctUntilChanged { (lhs, rhs) in lhs.stringValue == rhs.stringValue }
+            : state.asObservable()
     }
 }
