@@ -5,7 +5,7 @@
 
 import XCTest
 import Nimble
-import CoreKit
+@testable import CoreKit
 
 final class LinkedListTests: XCTestCase {
     
@@ -505,5 +505,92 @@ final class LinkedListBackwardIteratorTests: XCTestCase {
         var list = LinkedList<Int>(1, 2, 3)
         list.remove(at: 1)
         expect(Array(list.makeBackwardIterator())) == [3, 1]
+    }
+}
+
+final class LinkedListStorageTests: XCTestCase {
+    
+    func test_insertOnEmptyList_shouldPass() throws {
+        let list = LinkedListStorage<Int>()
+        try list.insert(1, at: 0)
+        expect(Array(list.makeIterator())) == [1]
+    }
+    
+    func test_insertOnLastIndex_shouldPass() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.insert(1, at: 3)
+        expect(Array(list.makeIterator())) == [1, 2, 3, 1]
+    }
+    
+    func test_insertOutOfLowerBound_shouldThrowError() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result(catching: { try list.insert(1, at: -1) })
+        guard let error = result.error, case LinkedListError.outOfBounds = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_insertOutOfUpperBound_shouldThrowError() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result(catching: { try list.insert(1, at: 4) })
+        guard let error = result.error, case LinkedListError.outOfBounds = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_updateOnEmptyList_shouldThrowError() {
+        let list = LinkedListStorage<Int>()
+        let result = Result(catching: { try list.update(1, at: 0) })
+        guard let error = result.error, case LinkedListError.empty = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_updateOutOfLowerBound_shouldThrowError() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result(catching: { try list.update(1, at: -1) })
+        guard let error = result.error, case LinkedListError.outOfBounds = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_updateOutOfUpperBound_shouldThrowError() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result(catching: { try list.update(1, at: 3) })
+        guard let error = result.error, case LinkedListError.outOfBounds = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_removeOnEmptyList_shouldThrowError() {
+        let list = LinkedListStorage<Int>()
+        let result = Result(catching: { try list.remove(at: 0) })
+        guard let error = result.error, case LinkedListError.empty = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_removeOutOfLowerBound_shouldThrowError() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result(catching: { try list.remove(at: -1) })
+        guard let error = result.error, case LinkedListError.outOfBounds = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_removeOutOfUpperBound_shouldThrowError() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result(catching: { try list.remove(at: 3) })
+        guard let error = result.error, case LinkedListError.outOfBounds = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
     }
 }

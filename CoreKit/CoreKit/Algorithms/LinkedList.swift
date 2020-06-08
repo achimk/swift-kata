@@ -52,17 +52,17 @@ extension LinkedList {
     
     public mutating func insert(_ element: T, at index: Int) {
         makeUnique()
-        storage.insert(element, at: index)
+        try! storage.insert(element, at: index)
     }
     
     public mutating func update(_ element: T, at index: Int) {
         makeUnique()
-        storage.update(element, at: index)
+        try! storage.update(element, at: index)
     }
     
     public mutating func remove(at index: Int) {
         makeUnique()
-        storage.remove(at: index)
+        try! storage.remove(at: index)
     }
     
     public mutating func removeAll() {
@@ -96,11 +96,7 @@ extension LinkedList: Collection {
     }
     
     public subscript(safe position: Int) -> T? {
-        if storage.indices.contains(position) {
-            return storage[position]
-        } else {
-            return nil
-        }
+        return storage[safe: position]
     }
 }
 
@@ -118,6 +114,8 @@ extension LinkedList {
         return BackwardLinkedListIterator(self)
     }
 }
+
+// MARK: - LinkedList (Private)
 
 extension LinkedList {
 
@@ -230,8 +228,8 @@ extension LinkedListStorage {
         }
     }
     
-    func insert(_ element: T, at index: Int) {
-        try! _insert(element, at: index, node: head)
+    func insert(_ element: T, at index: Int) throws {
+        try _insert(element, at: index, node: head)
     }
     
     private func _insert(_ element: T, at index: Int, node: Node?) throws {
@@ -257,26 +255,29 @@ extension LinkedListStorage {
         }
     }
     
-    func update(_ element: T, at index: Int) {
-        _update(element, at: index, node: head)
+    func update(_ element: T, at index: Int) throws {
+        try _update(element, at: index, node: head)
     }
     
-    private func _update(_ element: T, at index: Int, node: Node?) {
+    private func _update(_ element: T, at index: Int, node: Node?) throws {
         switch index {
         case 0:
-            node!.value = element
+            guard counter > 0 else { throw LinkedListError.empty }
+            node?.value = element
         default:
-            _update(element, at: index - 1, node: node?.next)
+            guard index > 0, index < counter else { throw LinkedListError.outOfBounds }
+            try _update(element, at: index - 1, node: node?.next)
         }
     }
     
-    func remove(at index: Int) {
-        try! _remove(at: index, node: head)
+    func remove(at index: Int) throws {
+        try _remove(at: index, node: head)
     }
     
     private func _remove(at index: Int, node: Node?) throws {
         switch index {
         case 0:
+            guard counter > 0 else { throw LinkedListError.empty }
             counter = counter.advanced(by: -1)
             let previous = node?.previous
             let next = node?.next
@@ -317,6 +318,10 @@ extension LinkedListStorage: Collection {
     
     subscript(position: Int) -> T {
         return try! _value(at: position, node: head)
+    }
+    
+    subscript(safe position: Int) -> T? {
+        return try? _value(at: position, node: head)
     }
     
     private func _value(at position: Int, node: Node?) throws -> T {
