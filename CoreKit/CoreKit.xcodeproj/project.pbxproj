@@ -47,6 +47,8 @@
 		273682D2241ACD0C00397641 /* Pair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273682D1241ACD0C00397641 /* Pair.swift */; };
 		273682D4241ACD3200397641 /* PairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273682D3241ACD3200397641 /* PairTests.swift */; };
 		273682D7241ACDF300397641 /* PairedByStrideIteratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273682D6241ACDF300397641 /* PairedByStrideIteratorTests.swift */; };
+		27E4CD7D248E95800008A2E0 /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E4CD7C248E95800008A2E0 /* LinkedList.swift */; };
+		27E4CD80248E979A0008A2E0 /* LinkedListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E4CD7F248E979A0008A2E0 /* LinkedListTests.swift */; };
 		27E773CD241ABEB6001DC736 /* CoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E773C3241ABEB6001DC736 /* CoreKit.framework */; };
 		27E773D2241ABEB6001DC736 /* CoreKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E773D1241ABEB6001DC736 /* CoreKitTests.swift */; };
 		27E773D4241ABEB6001DC736 /* CoreKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 27E773C6241ABEB6001DC736 /* CoreKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -106,6 +108,8 @@
 		273682D1241ACD0C00397641 /* Pair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pair.swift; sourceTree = "<group>"; };
 		273682D3241ACD3200397641 /* PairTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairTests.swift; sourceTree = "<group>"; };
 		273682D6241ACDF300397641 /* PairedByStrideIteratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairedByStrideIteratorTests.swift; sourceTree = "<group>"; };
+		27E4CD7C248E95800008A2E0 /* LinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
+		27E4CD7F248E979A0008A2E0 /* LinkedListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedListTests.swift; sourceTree = "<group>"; };
 		27E773C3241ABEB6001DC736 /* CoreKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		27E773C6241ABEB6001DC736 /* CoreKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreKit.h; sourceTree = "<group>"; };
 		27E773C7241ABEB6001DC736 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -269,6 +273,22 @@
 			path = Iterators;
 			sourceTree = "<group>";
 		};
+		27E4CD7B248E95740008A2E0 /* Algorithms */ = {
+			isa = PBXGroup;
+			children = (
+				27E4CD7C248E95800008A2E0 /* LinkedList.swift */,
+			);
+			path = Algorithms;
+			sourceTree = "<group>";
+		};
+		27E4CD7E248E97880008A2E0 /* Algorithms */ = {
+			isa = PBXGroup;
+			children = (
+				27E4CD7F248E979A0008A2E0 /* LinkedListTests.swift */,
+			);
+			path = Algorithms;
+			sourceTree = "<group>";
+		};
 		27E773B9241ABEB6001DC736 = {
 			isa = PBXGroup;
 			children = (
@@ -292,6 +312,7 @@
 		27E773C5241ABEB6001DC736 /* CoreKit */ = {
 			isa = PBXGroup;
 			children = (
+				27E4CD7B248E95740008A2E0 /* Algorithms */,
 				270F02AA241BEA9300E4F3A9 /* Domain */,
 				27368289241AC74B00397641 /* Extensions */,
 				27368252241AC5D300397641 /* Functional */,
@@ -309,6 +330,7 @@
 		27E773D0241ABEB6001DC736 /* CoreKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				27E4CD7E248E97880008A2E0 /* Algorithms */,
 				273682D5241ACDDE00397641 /* Iterators */,
 				273682C6241ACBDE00397641 /* Primitives */,
 				27E773D1241ABEB6001DC736 /* CoreKitTests.swift */,
@@ -521,6 +543,7 @@
 				27368271241AC68900397641 /* NonEmpty+Array.swift in Sources */,
 				2736827B241AC6A200397641 /* TaggedTime.swift in Sources */,
 				27368280241AC70A00397641 /* Boxes.swift in Sources */,
+				27E4CD7D248E95800008A2E0 /* LinkedList.swift in Sources */,
 				2736826A241AC68900397641 /* NonEmpty+Dictionary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -530,6 +553,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				273682D0241ACCEC00397641 /* EitherTests.swift in Sources */,
+				27E4CD80248E979A0008A2E0 /* LinkedListTests.swift in Sources */,
 				273682D4241ACD3200397641 /* PairTests.swift in Sources */,
 				27E773D2241ABEB6001DC736 /* CoreKitTests.swift in Sources */,
 				273682CC241ACC7100397641 /* ValidatedResultTests.swift in Sources */,
