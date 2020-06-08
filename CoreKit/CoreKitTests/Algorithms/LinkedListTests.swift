@@ -266,6 +266,48 @@ final class LinkedListTests: XCTestCase {
         let it = Array(list.makeBackwardIterator())
         expect(it) == [5, 4, 3, 2, 1]
     }
+    
+    // MARK: Test Copy On Write
+    
+    func test_append_shouldBeCopied() {
+        let listA = LinkedList<Int>(1, 2, 3)
+        var listB = listA
+        listB.append(4)
+        expect(Array(listA.makeIterator())) == [1, 2, 3]
+        expect(Array(listB.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    func test_insert_shouldBeCopied() {
+        let listA = LinkedList<Int>(1, 2, 3)
+        var listB = listA
+        listB.insert(4, at: 0)
+        expect(Array(listA.makeIterator())) == [1, 2, 3]
+        expect(Array(listB.makeIterator())) == [4, 1, 2, 3]
+    }
+    
+    func test_update_shouldBeCopied() {
+        let listA = LinkedList<Int>(1, 2, 3)
+        var listB = listA
+        listB.update(4, at: 0)
+        expect(Array(listA.makeIterator())) == [1, 2, 3]
+        expect(Array(listB.makeIterator())) == [4, 2, 3]
+    }
+    
+    func test_remove_shouldBeCopied() {
+        let listA = LinkedList<Int>(1, 2, 3)
+        var listB = listA
+        listB.remove(at: 0)
+        expect(Array(listA.makeIterator())) == [1, 2, 3]
+        expect(Array(listB.makeIterator())) == [2, 3]
+    }
+    
+    func test_removeAll_shouldBeCopied() {
+        let listA = LinkedList<Int>(1, 2, 3)
+        var listB = listA
+        listB.removeAll()
+        expect(Array(listA.makeIterator())) == [1, 2, 3]
+        expect(Array(listB.makeIterator())) == []
+    }
 }
 
 final class LinkedListForewardIteratorTests: XCTestCase {
