@@ -124,6 +124,16 @@ extension LinkedList {
         try! storage.insert(node: node, before: source)
     }
     
+    public mutating func removeFirst() {
+        makeUnique()
+        try! storage.removeFirst()
+    }
+    
+    public mutating func removeLast() {
+        makeUnique()
+        try! storage.removeLast()
+    }
+    
     public mutating func remove(node: Node) {
         makeUnique()
         try! storage.remove(node: node)
@@ -345,6 +355,26 @@ extension LinkedListStorage {
         }
     }
     
+    func removeFirst() throws {
+        try checkIfNotEmpty()
+        
+        counter = counter.advanced(by: -1)
+        let next = head?.next
+        head?.next = nil
+        next?.previous = nil
+        head = next
+    }
+    
+    func removeLast() throws {
+        try checkIfNotEmpty()
+        
+        counter = counter.advanced(by: -1)
+        let previous = tail?.previous
+        tail?.previous = nil
+        previous?.next = nil
+        tail = previous
+    }
+    
     func remove(node: Node) throws {
         try checkNodeLinked(node)
         
@@ -383,6 +413,12 @@ extension LinkedListStorage {
         counter = counter - count
         node.previous = nil
         head = node
+    }
+    
+    private func checkIfNotEmpty() throws {
+        if head == nil {
+            throw LinkedListError.empty
+        }
     }
     
     private func checkNodeNotAlreadyLinked(_ node: Node) throws {

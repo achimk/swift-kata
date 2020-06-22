@@ -879,6 +879,58 @@ final class LinkedListStorageTests: XCTestCase {
         expect(Array(list.makeIterator())) == [1, 2, 3, 4]
     }
     
+    // MARK: Test Remove First
+    
+    func test_removeFirstForNonEmptyList_shouldNotContainFirstElement() throws{
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeFirst()
+        expect(Array(list.makeIterator())) == [2, 3]
+    }
+    
+    func test_removeFirstForNonEmptyList_shouldDecrementCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeFirst()
+        expect(list.count) == 2
+    }
+    
+    func test_removeFirstForEmptyList_shouldFail() {
+        let list = LinkedListStorage<Int>()
+        let result = Result {
+            try list.removeFirst()
+        }
+        expect(result.isFailure) == true
+        guard let error = result.error, case LinkedListError.empty = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    // MARK: Test Remove Last
+    
+    func test_removeLastForNonEmptyList_shouldNotContainLastElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeLast()
+        expect(Array(list.makeIterator())) == [1, 2]
+    }
+    
+    func test_removeLastForNonEmptyList_shouldDecrementCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeLast()
+        expect(list.count) == 2
+    }
+    
+    func test_removeLastForEmptyList_shouldFail() {
+        let list = LinkedListStorage<Int>()
+        let result = Result {
+            try list.removeLast()
+        }
+        expect(result.isFailure) == true
+        guard let error = result.error, case LinkedListError.empty = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
     // MARK: Test Remove Node
     
     func test_removeNodeFromOneElementList_shouldResetHead() throws {
@@ -1216,6 +1268,22 @@ final class ForewardIteratorForNodeOperationTests: XCTestCase {
         assertOrder(list, toEquals: [1, 2, 3, 4])
     }
     
+    // MARK: Test Remove Fist
+    
+    func test_removeFirst_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeFirst()
+        assertOrder(list, toEquals: [2, 3])
+    }
+    
+    // MARK: Test Remove Last
+    
+    func test_removeLast_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeLast()
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
     // MARK: Test Remove
     
     func test_removeFirstNode_shouldIterateWithValidOrder() throws {
@@ -1376,6 +1444,22 @@ final class BackwardIteratorForNodeOperationTests: XCTestCase {
         let list = LinkedListStorage<Int>([1, 2, 3])
         if let tail = list.tail { try list.insert(node: node, after: tail) }
         assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    // MARK: Test Remove Fist
+    
+    func test_removeFirst_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeFirst()
+        assertOrder(list, toEquals: [3, 2])
+    }
+    
+    // MARK: Test Remove Last
+    
+    func test_removeLast_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.removeLast()
+        assertOrder(list, toEquals: [2, 1])
     }
     
     // MARK: Test Remove
