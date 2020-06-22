@@ -10,11 +10,20 @@ public enum LinkedListError: Error {
     case outOfBounds
 }
 
+// MARK: - Node
+
+public class LinkedListNode<T> {
+    public var value: T
+    public internal(set) var next: LinkedListNode<T>?
+    public internal(set) weak var previous: LinkedListNode<T>?
+    public init(_ value: T) { self.value = value }
+}
+
 // MARK: - LinkedList
 
 public struct LinkedList<T> {
     
-    typealias Node = LinkedListStorage<T>.Node
+    typealias Node = LinkedListNode<T>
     private var storage: LinkedListStorage<T>
     
     var head: Node? { return storage.head }
@@ -41,7 +50,7 @@ public struct LinkedList<T> {
     }
 }
 
-// MARK: - LinkedList (Operations)
+// MARK: - LinkedList (Element Operations)
 
 extension LinkedList {
     
@@ -167,14 +176,9 @@ public struct BackwardLinkedListIterator<T>: IteratorProtocol, Sequence {
 // MARK: - LinkedListStorage (Container)
 
 final class LinkedListStorage<T> {
-    
-    final class Node {
-        var value: T
-        var next: Node?
-        weak var previous: Node?
-        init(_ value: T) { self.value = value }
-    }
-    
+
+    typealias Node = LinkedListNode<T>
+
     private(set) var counter: Int
     private(set) var head: Node?
     private(set) var tail: Node?
@@ -212,6 +216,8 @@ final class LinkedListStorage<T> {
         }
     }
 }
+
+// MARK: - LinkedListStorage (Element Operations)
 
 extension LinkedListStorage {
     
@@ -298,6 +304,8 @@ extension LinkedListStorage {
     }
 }
 
+// MARK: - LinkedListStorage (Collection)
+
 extension LinkedListStorage: Collection {
     
     var count: Int {
@@ -336,6 +344,8 @@ extension LinkedListStorage: Collection {
         }
     }
 }
+
+// MARK: - LinkedListStorage (Internal)
 
 extension LinkedListStorage {
     
