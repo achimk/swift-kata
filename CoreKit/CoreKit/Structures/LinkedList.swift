@@ -398,7 +398,7 @@ extension LinkedListStorage {
         
         counter = counter.advanced(by: -1)
         let next = head?.next
-        head?.next = nil
+        head.map { clearNode($0) }
         next?.previous = nil
         head = next
     }
@@ -408,7 +408,7 @@ extension LinkedListStorage {
         
         counter = counter.advanced(by: -1)
         let previous = tail?.previous
-        tail?.previous = nil
+        tail.map { clearNode($0) }
         previous?.next = nil
         tail = previous
     }
@@ -417,13 +417,13 @@ extension LinkedListStorage {
         try checkNodeLinked(node)
         
         counter = count.advanced(by: -1)
-        node.parent = nil
         
         let next = node.next
         let previous = node.previous
         
         previous?.next = next
         next?.previous = previous
+        clearNode(node)
         
         if head === node { head = next }
         if tail === node { tail = previous }
@@ -435,6 +435,7 @@ extension LinkedListStorage {
         var count = 0
         let it = ForewardNodeIterator(node.next)
         it.forEach { node in
+            clearNode(node)
             count = count.advanced(by: 1)
         }
         
@@ -449,6 +450,7 @@ extension LinkedListStorage {
         var count = 0
         let it = BackwardNodeIterator(node.previous)
         it.forEach { node in
+            clearNode(node)
             count = count.advanced(by: 1)
         }
         
