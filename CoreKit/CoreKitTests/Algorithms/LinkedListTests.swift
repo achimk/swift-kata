@@ -983,6 +983,58 @@ final class LinkedListStorageTests: XCTestCase {
         expect(Array(list.makeIterator())) == [1, 3, 4]
     }
     
+    // MARK: Test Remove All After
+    
+    func test_removeAllAfterHead_shouldContainOneElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.head { try list.removeAll(after: node) }
+        expect(Array(list.makeIterator())) == [1]
+    }
+    
+    func test_removeAllAfterTail_shouldContainAllElements() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.tail { try list.removeAll(after: node) }
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4, 5]
+    }
+    
+    func test_removeAllAfterMiddleNode_shouldContainBeforeElements() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.head?.next?.next { try list.removeAll(after: node) }
+        expect(Array(list.makeIterator())) == [1, 2, 3]
+    }
+    
+    func test_removeAllAfterMiddleNode_shouldUpdateCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.head?.next?.next { try list.removeAll(after: node) }
+        expect(list.count) == 3
+    }
+    
+    // MARK: TestRemove All Before
+    
+    func test_removeAllBeforeHead_shouldContainAllElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.head { try list.removeAll(before: node) }
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4, 5]
+    }
+    
+    func test_removeAllBeforeTail_shouldContainOneElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.tail { try list.removeAll(before: node) }
+        expect(Array(list.makeIterator())) == [5]
+    }
+    
+    func test_removeAllBeforeMiddleNode_shouldContainAfterElements() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.head?.next?.next { try list.removeAll(before: node) }
+        expect(Array(list.makeIterator())) == [3, 4, 5]
+    }
+    
+    func test_removeAllBeforeMiddleNode_shouldUpdateCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4, 5])
+        if let node = list.head?.next?.next { try list.removeAll(before: node) }
+        expect(list.count) == 3
+    }
+    
     // MARK: Test Element Operations
     
     func test_insertOnEmptyList_shouldPass() throws {
@@ -1184,6 +1236,46 @@ final class ForewardIteratorForNodeOperationTests: XCTestCase {
         assertOrder(list, toEquals: [1, 3])
     }
     
+    // MARK: Test Remove All After
+    
+    func test_removeAllAfterFirstNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head { try list.removeAll(after: node) }
+        assertOrder(list, toEquals: [1])
+    }
+    
+    func test_removeAllAfterLastNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.tail { try list.removeAll(after: node) }
+        assertOrder(list, toEquals: [1, 2, 3])
+    }
+    
+    func test_removeAllAfterMiddleNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head?.next { try list.removeAll(after: node) }
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
+    // MARK: Test Remove All Before
+    
+    func test_removeAllBeforeFirstNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head { try list.removeAll(before: node) }
+        assertOrder(list, toEquals: [1, 2, 3])
+    }
+    
+    func test_removeAllBeforeLastNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.tail { try list.removeAll(before: node) }
+        assertOrder(list, toEquals: [3])
+    }
+    
+    func test_removeAllBeforeMiddleNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head?.next { try list.removeAll(before: node) }
+        assertOrder(list, toEquals: [2, 3])
+    }
+    
     // MARK: Private
     
     func assertOrder<T: Equatable>(_ list: LinkedListStorage<T>, toEquals order: [T], file: StaticString = #file, line: UInt = #line) {
@@ -1304,6 +1396,46 @@ final class BackwardIteratorForNodeOperationTests: XCTestCase {
         let list = LinkedListStorage<Int>([1, 2, 3])
         if let node = list.head?.next { try list.remove(node: node) }
         assertOrder(list, toEquals: [3, 1])
+    }
+    
+    // MARK: Test Remove All After
+    
+    func test_removeAllAfterFirstNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head { try list.removeAll(after: node) }
+        assertOrder(list, toEquals: [1])
+    }
+    
+    func test_removeAllAfterLastNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.tail { try list.removeAll(after: node) }
+        assertOrder(list, toEquals: [3, 2, 1])
+    }
+    
+    func test_removeAllAfterMiddleNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head?.next { try list.removeAll(after: node) }
+        assertOrder(list, toEquals: [2, 1])
+    }
+    
+    // MARK: Test Remove All Before
+    
+    func test_removeAllBeforeFirstNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head { try list.removeAll(before: node) }
+        assertOrder(list, toEquals: [3, 2, 1])
+    }
+    
+    func test_removeAllBeforeLastNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.tail { try list.removeAll(before: node) }
+        assertOrder(list, toEquals: [3])
+    }
+    
+    func test_removeAllBeforeMiddleNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head?.next { try list.removeAll(before: node) }
+        assertOrder(list, toEquals: [3, 2])
     }
     
     // MARK: Private

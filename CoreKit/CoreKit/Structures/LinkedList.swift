@@ -128,6 +128,16 @@ extension LinkedList {
         makeUnique()
         try! storage.remove(node: node)
     }
+    
+    public mutating func removeAll(after node: Node) {
+        makeUnique()
+        try! storage.removeAll(after: node)
+    }
+    
+    public mutating func removeAll(before node: Node) {
+        makeUnique()
+        try! storage.removeAll(before: node)
+    }
 }
 
 // MARK: - LinkedList (Element Operations)
@@ -354,15 +364,25 @@ extension LinkedListStorage {
     func removeAll(after node: Node) throws {
         try checkNodeLinked(node)
         
-        // FIXME: Implement!
-        fatalError("Implement!")
+        var count = 0
+        let it = ForewardNodeIterator(node.next)
+        it.forEach { _ in count = count.advanced(by: 1) }
+        
+        counter = counter - count
+        node.next = nil
+        tail = node
     }
     
     func removeAll(before node: Node) throws {
         try checkNodeLinked(node)
         
-        // FIXME: Implement!
-        fatalError("Implement!")
+        var count = 0
+        let it = BackwardNodeIterator(node.previous)
+        it.forEach { _ in count = count.advanced(by: 1) }
+        
+        counter = counter - count
+        node.previous = nil
+        head = node
     }
     
     private func checkNodeNotAlreadyLinked(_ node: Node) throws {
