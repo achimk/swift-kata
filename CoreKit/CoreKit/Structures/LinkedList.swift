@@ -22,6 +22,53 @@ open class LinkedListNode<T> {
     public init(_ value: T) { self.value = value }
 }
 
+// MARK: - Node (Iterators)
+
+extension LinkedListNode {
+    
+    public func makeForewardIterator() -> ForewardNodeIterator<T> {
+        return ForewardNodeIterator(self)
+    }
+    
+    public func makeBackwardIterator() -> BackwardNodeIterator<T> {
+        return BackwardNodeIterator(self)
+    }
+}
+
+// MARK: - ForewardNodeIterator
+
+public struct ForewardNodeIterator<T>: IteratorProtocol, Sequence {
+    
+    private var node: LinkedListNode<T>?
+    
+    public init(_ node: LinkedListNode<T>?) {
+        self.node = node
+    }
+    
+    public mutating func next() -> T? {
+        let value = node?.value
+        self.node = node?.next
+        return value
+    }
+}
+
+// MARK: - BackwardNodeIterator
+
+public struct BackwardNodeIterator<T>: IteratorProtocol, Sequence {
+    
+    private var node: LinkedListNode<T>?
+    
+    public init(_ node: LinkedListNode<T>?) {
+        self.node = node
+    }
+    
+    public mutating func next() -> T? {
+        let value = node?.value
+        self.node = node?.previous
+        return value
+    }
+}
+
 // MARK: - LinkedList
 
 public struct LinkedList<T> {
@@ -148,12 +195,12 @@ extension LinkedList: RandomAccessCollection { }
 
 extension LinkedList {
     
-    public func makeForewardIterator() -> ForewardLinkedListIterator<T> {
-        return ForewardLinkedListIterator(self)
+    public func makeForewardIterator() -> ForewardNodeIterator<T> {
+        return ForewardNodeIterator(head)
     }
     
-    public func makeBackwardIterator() -> BackwardLinkedListIterator<T> {
-        return BackwardLinkedListIterator(self)
+    public func makeBackwardIterator() -> BackwardNodeIterator<T> {
+        return BackwardNodeIterator(tail)
     }
 }
 
@@ -165,44 +212,6 @@ extension LinkedList {
         if !isKnownUniquelyReferenced(&storage) {
             storage = storage.cloned()
         }
-    }
-}
-
-// MARK: - ForewardLinkedListIterator
-
-public struct ForewardLinkedListIterator<T>: IteratorProtocol, Sequence {
-    
-    private let list: LinkedList<T>
-    private var node: LinkedList<T>.Node?
-    
-    public init(_ list: LinkedList<T>) {
-        self.list = list
-        self.node = list.head
-    }
-    
-    public mutating func next() -> T? {
-        let value = node?.value
-        self.node = node?.next
-        return value
-    }
-}
-
-// MARK: - BackwardLinkedListIterator
-
-public struct BackwardLinkedListIterator<T>: IteratorProtocol, Sequence {
-    
-    private let list: LinkedList<T>
-    private var node: LinkedList<T>.Node?
-    
-    public init(_ list: LinkedList<T>) {
-        self.list = list
-        self.node = list.tail
-    }
-    
-    public mutating func next() -> T? {
-        let value = node?.value
-        self.node = node?.previous
-        return value
     }
 }
 
@@ -340,6 +349,20 @@ extension LinkedListStorage {
         
         if head === node { head = next }
         if tail === node { tail = previous }
+    }
+    
+    func removeAll(after node: Node) throws {
+        try checkNodeLinked(node)
+        
+        // FIXME: Implement!
+        fatalError("Implement!")
+    }
+    
+    func removeAll(before node: Node) throws {
+        try checkNodeLinked(node)
+        
+        // FIXME: Implement!
+        fatalError("Implement!")
     }
     
     private func checkNodeNotAlreadyLinked(_ node: Node) throws {

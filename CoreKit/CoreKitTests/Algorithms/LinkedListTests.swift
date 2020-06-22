@@ -983,7 +983,7 @@ final class LinkedListStorageTests: XCTestCase {
         expect(Array(list.makeIterator())) == [1, 3, 4]
     }
     
-    // MARK: Test Elements
+    // MARK: Test Element Operations
     
     func test_insertOnEmptyList_shouldPass() throws {
         let list = LinkedListStorage<Int>()
@@ -1068,4 +1068,249 @@ final class LinkedListStorageTests: XCTestCase {
             return
         }
     }
+}
+
+final class ForewardIteratorForNodeOperationTests: XCTestCase {
+    
+    // MARK: Test Append
+    
+    func test_appendToEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>()
+        try list.append(node: node)
+        assertOrder(list, toEquals: [1])
+    }
+    
+    func test_appendToNonEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.append(node: node)
+        assertOrder(list, toEquals: [1, 2, 3, 4])
+    }
+    
+    // MARK: Test Prepend
+    
+    func test_prependToEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>()
+        try list.prepend(node: node)
+        assertOrder(list, toEquals: [1])
+    }
+    
+    func test_prependToNonEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        try list.prepend(node: node)
+        assertOrder(list, toEquals: [1, 2, 3, 4])
+    }
+    
+    // MARK: Test Insert Before
+    
+    func test_insertNodeIntoOneElementListBeforeHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>(2)
+        if let head = list.head { try list.insert(node: node, before: head) }
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        if let head = list.head { try list.insert(node: node, before: head) }
+        assertOrder(list, toEquals: [1, 2, 3, 4])
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>(2)
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(3)
+        let list = LinkedListStorage<Int>([1, 2, 4])
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        assertOrder(list, toEquals: [1, 2, 3, 4])
+    }
+    
+    // MARK: Test Insert After
+    
+    func test_insertNodeIntoOneElementListAfterHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(2)
+        let list = LinkedListStorage<Int>(1)
+        if let head = list.head { try list.insert(node: node, after: head) }
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(2)
+        let list = LinkedListStorage<Int>([1, 3, 4])
+        if let head = list.head { try list.insert(node: node, after: head) }
+        assertOrder(list, toEquals: [1, 2, 3, 4])
+    }
+    
+    func test_insertNodeIntoOneElementListAfterTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(2)
+        let list = LinkedListStorage<Int>(1)
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        assertOrder(list, toEquals: [1, 2, 3, 4])
+    }
+    
+    // MARK: Test Remove
+    
+    func test_removeFirstNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let head = list.head { try list.remove(node: head) }
+        assertOrder(list, toEquals: [2, 3])
+    }
+    
+    func test_removeLastNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.remove(node: tail) }
+        assertOrder(list, toEquals: [1, 2])
+    }
+    
+    func test_removeMiddleNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head?.next { try list.remove(node: node) }
+        assertOrder(list, toEquals: [1, 3])
+    }
+    
+    // MARK: Private
+    
+    func assertOrder<T: Equatable>(_ list: LinkedListStorage<T>, toEquals order: [T], file: StaticString = #file, line: UInt = #line) {
+        let elements = list.head.map { Array($0.makeForewardIterator()) } ?? []
+        XCTAssertEqual(elements, order, file: file, line: line)
+    }
+}
+
+final class BackwardIteratorForNodeOperationTests: XCTestCase {
+    
+    // MARK: Test Append
+    
+    func test_appendToEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>()
+        try list.append(node: node)
+        assertOrder(list, toEquals: [1])
+    }
+    
+    func test_appendToNonEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.append(node: node)
+        assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    // MARK: Test Prepend
+    
+    func test_prependToEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>()
+        try list.prepend(node: node)
+        assertOrder(list, toEquals: [1])
+    }
+    
+    func test_prependToNonEmptyList_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        try list.prepend(node: node)
+        assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    // MARK: Test Insert Before
+    
+    func test_insertNodeIntoOneElementListBeforeHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>(2)
+        if let head = list.head { try list.insert(node: node, before: head) }
+        assertOrder(list, toEquals: [2, 1])
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        if let head = list.head { try list.insert(node: node, before: head) }
+        assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(1)
+        let list = LinkedListStorage<Int>(2)
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        assertOrder(list, toEquals: [2, 1])
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(3)
+        let list = LinkedListStorage<Int>([1, 2, 4])
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    // MARK: Test Insert After
+    
+    func test_insertNodeIntoOneElementListAfterHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(2)
+        let list = LinkedListStorage<Int>(1)
+        if let head = list.head { try list.insert(node: node, after: head) }
+        assertOrder(list, toEquals: [2, 1])
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterHead_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(2)
+        let list = LinkedListStorage<Int>([1, 3, 4])
+        if let head = list.head { try list.insert(node: node, after: head) }
+        assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    func test_insertNodeIntoOneElementListAfterTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(2)
+        let list = LinkedListStorage<Int>(1)
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        assertOrder(list, toEquals: [2, 1])
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterTail_shouldIterateWithValidOrder() throws {
+        let node = LinkedListNode<Int>(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        assertOrder(list, toEquals: [4, 3, 2, 1])
+    }
+    
+    // MARK: Test Remove
+    
+    func test_removeFirstNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let head = list.head { try list.remove(node: head) }
+        assertOrder(list, toEquals: [3, 2])
+    }
+    
+    func test_removeLastNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.remove(node: tail) }
+        assertOrder(list, toEquals: [2, 1])
+    }
+    
+    func test_removeMiddleNode_shouldIterateWithValidOrder() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let node = list.head?.next { try list.remove(node: node) }
+        assertOrder(list, toEquals: [3, 1])
+    }
+    
+    // MARK: Private
+    
+    func assertOrder<T: Equatable>(_ list: LinkedListStorage<T>, toEquals order: [T], file: StaticString = #file, line: UInt = #line) {
+        let elements = list.tail.map { Array($0.makeBackwardIterator()) } ?? []
+        XCTAssertEqual(elements, order, file: file, line: line)
+    }
+
 }
