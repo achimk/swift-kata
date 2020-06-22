@@ -8,14 +8,17 @@ import Foundation
 public enum LinkedListError: Error {
     case empty
     case outOfBounds
+    case nodeNotLinked
+    case nodeAlreadyLinked
 }
 
 // MARK: - Node
 
-public class LinkedListNode<T> {
+open class LinkedListNode<T> {
+    fileprivate weak var parent: LinkedListStorage<T>?
     public var value: T
-    public internal(set) var next: LinkedListNode<T>?
-    public internal(set) weak var previous: LinkedListNode<T>?
+    public fileprivate(set) var next: LinkedListNode<T>?
+    public fileprivate(set) weak var previous: LinkedListNode<T>?
     public init(_ value: T) { self.value = value }
 }
 
@@ -23,11 +26,11 @@ public class LinkedListNode<T> {
 
 public struct LinkedList<T> {
     
-    typealias Node = LinkedListNode<T>
+    public typealias Node = LinkedListNode<T>
     private var storage: LinkedListStorage<T>
     
-    var head: Node? { return storage.head }
-    var tail: Node? { return storage.tail }
+    public var head: Node? { return storage.head }
+    public var tail: Node? { return storage.tail }
     
     fileprivate init(_ storage: LinkedListStorage<T>) {
         self.storage = storage
@@ -47,6 +50,36 @@ public struct LinkedList<T> {
     
     public init(_ elements: [T]) {
         storage = LinkedListStorage(elements)
+    }
+}
+
+// MARK: - LinkedList (Node Operations)
+
+extension LinkedList {
+    
+    public mutating func append(node: Node) {
+        makeUnique()
+        try! storage.append(node: node)
+    }
+    
+    public mutating func prepend(node: Node) {
+        makeUnique()
+        try! storage.prepend(node: node)
+    }
+    
+    public mutating func insert(node: Node, after source: Node) {
+        makeUnique()
+        try! storage.insert(node: node, after: source)
+    }
+    
+    public mutating func insert(node: Node, before source: Node) {
+        makeUnique()
+        try! storage.insert(node: node, before: source)
+    }
+    
+    public mutating func remove(node: Node) {
+        makeUnique()
+        try! storage.remove(node: node)
     }
 }
 
@@ -179,7 +212,7 @@ final class LinkedListStorage<T> {
 
     typealias Node = LinkedListNode<T>
 
-    private(set) var counter: Int
+    private var counter: Int
     private(set) var head: Node?
     private(set) var tail: Node?
     
@@ -191,7 +224,7 @@ final class LinkedListStorage<T> {
     
     init(_ element: T) {
         counter = 1
-        let node = Node(element)
+        let node = createNode(element)
         head = node
         tail = node
     }
@@ -199,13 +232,13 @@ final class LinkedListStorage<T> {
     init(_ elements: [T]) {
         counter = elements.count
         if let first = elements.first {
-            let node = Node(first)
+            let node = createNode(first)
             head = node
             tail = node
             
             let list = Array(elements.dropFirst())
             list.forEach { (element) in
-                let node = Node(element)
+                let node = createNode(element)
                 tail?.next = node
                 node.previous = tail
                 tail = node
@@ -217,13 +250,118 @@ final class LinkedListStorage<T> {
     }
 }
 
+// MARK: - LinkedListStorage (Node Operations)
+
+extension LinkedListStorage {
+    
+    func append(node: Node) throws {
+        try checkNodeNotAlreadyLinked(node)
+        let node = cloneNodeIfNeeded(node)
+        
+        counter = counter.advanced(by: 1)
+        node.parent = self
+        
+        if tail == nil {
+            head = node
+            tail = node
+        } else {
+            tail?.next = node
+            node.previous = tail
+            tail = node
+        }
+    }
+    
+    func prepend(node: Node) throws {
+        try checkNodeNotAlreadyLinked(node)
+        let node = cloneNodeIfNeeded(node)
+        
+        counter = counter.advanced(by: 1)
+        node.parent = self
+        
+        if head == nil {
+            head = node
+            tail = node
+        } else {
+            head?.previous = node
+            node.next = head
+            head = node
+        }
+    }
+    
+    func insert(node: Node, after source: Node) throws {
+        try checkNodeNotAlreadyLinked(node)
+        try checkNodeLinked(source)
+        
+        counter = counter.advanced(by: 1)
+        
+        let next = source.next
+        
+        source.next = node
+        node.previous = source
+        node.next = next
+        next?.previous = node
+        node.parent = self
+        
+        if tail === source {
+            tail = node
+        }
+    }
+    
+    func insert(node: Node, before source: Node) throws {
+        try checkNodeNotAlreadyLinked(node)
+        try checkNodeLinked(source)
+        
+        counter = counter.advanced(by: 1)
+        
+        let previous = source.previous
+        
+        source.previous = node
+        node.next = source
+        node.previous = previous
+        previous?.next = node
+        node.parent = self
+        
+        if head === source {
+            head = node
+        }
+    }
+    
+    func remove(node: Node) throws {
+        try checkNodeLinked(node)
+        
+        counter = count.advanced(by: -1)
+        node.parent = nil
+        
+        let next = node.next
+        let previous = node.previous
+        
+        previous?.next = next
+        next?.previous = previous
+        
+        if head === node { head = next }
+        if tail === node { tail = previous }
+    }
+    
+    private func checkNodeNotAlreadyLinked(_ node: Node) throws {
+        if node.parent === self {
+            throw LinkedListError.nodeAlreadyLinked
+        }
+    }
+    
+    private func checkNodeLinked(_ node: Node) throws {
+        guard node.parent === self else {
+            throw LinkedListError.nodeNotLinked
+        }
+    }
+}
+
 // MARK: - LinkedListStorage (Element Operations)
 
 extension LinkedListStorage {
     
     func append(_ element: T) {
         counter = counter.advanced(by: 1)
-        let node = Node(element)
+        let node = createNode(element)
         if tail == nil {
             head = node
             tail = node
@@ -242,7 +380,7 @@ extension LinkedListStorage {
         switch index {
         case 0:
             counter = counter.advanced(by: 1)
-            let newNode = Node(element)
+            let newNode = createNode(element)
             let previous = node == nil ? tail : node?.previous
             let next = node
             
@@ -345,11 +483,28 @@ extension LinkedListStorage: Collection {
     }
 }
 
-// MARK: - LinkedListStorage (Internal)
+// MARK: - LinkedListStorage (Private)
 
 extension LinkedListStorage {
     
-    func cloned() -> LinkedListStorage {
+    fileprivate func createNode(_ value: T) -> Node {
+        let node = Node(value)
+        node.parent = self
+        return node
+    }
+    
+    fileprivate func cloneNodeIfNeeded(_ node: Node) -> Node {
+        guard let parent = node.parent else {
+            return node
+        }
+        if parent !== self {
+            return createNode(node.value)
+        } else {
+            return node
+        }
+    }
+    
+    fileprivate func cloned() -> LinkedListStorage {
         return LinkedListStorage(Array(makeIterator()))
     }
 }

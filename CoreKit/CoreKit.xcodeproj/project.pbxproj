@@ -158,6 +158,8 @@
 		27368253241AC5DC00397641 /* Structures */ = {
 			isa = PBXGroup;
 			children = (
+				27E4CD7C248E95800008A2E0 /* LinkedList.swift */,
+				27368254241AC5E500397641 /* Primitives */,
 				2736825D241AC68900397641 /* NonEmpty */,
 				27368276241AC6A200397641 /* Tagged */,
 			);
@@ -276,7 +278,6 @@
 		27E4CD7B248E95740008A2E0 /* Algorithms */ = {
 			isa = PBXGroup;
 			children = (
-				27E4CD7C248E95800008A2E0 /* LinkedList.swift */,
 			);
 			path = Algorithms;
 			sourceTree = "<group>";
@@ -317,7 +318,6 @@
 				27368289241AC74B00397641 /* Extensions */,
 				27368252241AC5D300397641 /* Functional */,
 				273682B9241AC8C400397641 /* Iterators */,
-				27368254241AC5E500397641 /* Primitives */,
 				27368253241AC5DC00397641 /* Structures */,
 				27368282241AC71700397641 /* Types */,
 				2736827D241AC6E100397641 /* Utilities */,

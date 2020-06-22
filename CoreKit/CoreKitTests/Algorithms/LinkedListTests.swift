@@ -510,6 +510,481 @@ final class LinkedListBackwardIteratorTests: XCTestCase {
 
 final class LinkedListStorageTests: XCTestCase {
     
+    // MARK: Test Append Node
+    
+    func test_appendNodeToEmptyList_shouldEqualsHead() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.append(node: node)
+        expect(list.head) === node
+    }
+    
+    func test_appendNodeToEmptyList_shouldEqualsTail() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.append(node: node)
+        expect(list.tail) === node
+    }
+    
+    func test_appendNodeToEmptyList_shouldCounterBeIncremented() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.append(node: node)
+        expect(list.count) == 1
+    }
+    
+    func test_appendNodeToEmptyList_shouldContainElement() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.append(node: node)
+        expect(Array(list.makeIterator())) == [1]
+    }
+    
+    func test_appendNodeToNonEmptyList_shouldNotModifyHead() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.append(node: node)
+        expect(list.head) !== node
+    }
+    
+    func test_appendNodeToNonEmptyList_shouldEqualsTail() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.append(node: node)
+        expect(list.tail) === node
+    }
+    
+    func test_appendNodeToNonEmptyList_shouldCounterBeIncremented() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.append(node: node)
+        expect(list.count) == 4
+    }
+    
+    func test_appendNodeToNonEmptyList_shouldContainElement() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        try list.append(node: node)
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    func test_appendAlreadyContainedNode_shouldFail() {
+        
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result {
+            if let head = list.head { try list.append(node: head) }
+        }
+        
+        expect(result.isFailure) == true
+        guard let error = result.error, case LinkedListError.nodeAlreadyLinked = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_appendContainedNodeFromOtherList_shouldCloneNode() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let other = LinkedListStorage<Int>([4])
+        
+        let result = Result {
+            if let node = other.head { try list.append(node: node) }
+        }
+        
+        expect(result.isSuccess) == true
+        expect(list.tail) !== other.tail
+        expect(list.tail?.value) == other.tail?.value
+    }
+    
+    func test_appendContainedNodeFromOtherList_shouldContainElement() {
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let other = LinkedListStorage<Int>([4])
+        
+        let result = Result {
+            if let node = other.head { try list.append(node: node) }
+        }
+        
+        expect(result.isSuccess) == true
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    // MARK: Test Prepend Node
+    
+    func test_prependNodeToEmptyList_shouldEqualsHead() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.prepend(node: node)
+        expect(list.head) === node
+    }
+    
+    func test_prependNodeToEmptyList_shouldEqualsTail() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.prepend(node: node)
+        expect(list.tail) === node
+    }
+    
+    func test_prependNodeToEmptyList_shouldCounterBeIncremented() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.prepend(node: node)
+        expect(list.count) == 1
+    }
+    
+    func test_prependNodeToEmptyList_shouldContainElement() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>()
+        try list.prepend(node: node)
+        expect(Array(list.makeIterator())) == [1]
+    }
+    
+    func test_prependNodeToNonEmptyList_shouldEqualsHead() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        try list.prepend(node: node)
+        expect(list.head) === node
+    }
+    
+    func test_prependNodeToNonEmptyList_shouldNotModifyTail() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        try list.prepend(node: node)
+        expect(list.tail) !== node
+    }
+    
+    func test_prependNodeToNonEmptyList_shouldCounterBeIncremented() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        try list.prepend(node: node)
+        expect(list.count) == 4
+    }
+    
+    func test_prependNodeToNonEmptyList_shouldContainElement() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        try list.prepend(node: node)
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    func test_prependAlreadyContainedNode_shouldFail() {
+        
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        let result = Result {
+            if let head = list.head { try list.prepend(node: head) }
+        }
+        
+        expect(result.isFailure) == true
+        guard let error = result.error, case LinkedListError.nodeAlreadyLinked = error else {
+            fail("Invalid error type: \(result)")
+            return
+        }
+    }
+    
+    func test_prependContainedNodeFromOtherList_shouldCloneNode() {
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        let other = LinkedListStorage<Int>([1])
+        
+        let result = Result {
+            if let node = other.head { try list.prepend(node: node) }
+        }
+        
+        expect(result.isSuccess) == true
+        expect(list.head) !== other.head
+        expect(list.head?.value) == other.head?.value
+    }
+    
+    func test_prependContainedNodeFromOtherList_shouldContainElement() {
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        let other = LinkedListStorage<Int>([1])
+        
+        let result = Result {
+            if let node = other.head { try list.prepend(node: node) }
+        }
+        
+        expect(result.isSuccess) == true
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    // MARK: Test Insert Node After
+    
+    func test_insertNodeIntoOneElementListAfterHead_shouldUpdateTail() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>(1)
+        if let head = list.head { try list.insert(node: node, after: head) }
+        expect(list.tail) === node
+    }
+    
+    func test_insertNodeIntoOneElementListAfterHead_shouldIncrementCounter() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>(1)
+        if let head = list.head { try list.insert(node: node, after: head) }
+        expect(list.count) == 2
+    }
+    
+    func test_insertNodeIntoOneElementListAfterHead_shouldContainElement() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>(1)
+        if let head = list.head { try list.insert(node: node, after: head) }
+        expect(Array(list.makeIterator())) == [1, 2]
+    }
+    
+    func test_insertNodeIntoOneElementListAfterTail_shouldUpdateTail() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>(1)
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        expect(list.tail) === node
+    }
+    
+    func test_insertNodeIntoOneElementListAfterTail_shouldIncrementCounter() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>(1)
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        expect(list.count) == 2
+    }
+    
+    func test_insertNodeIntoOneElementListAfterTail_shouldContainElement() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>(1)
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        expect(Array(list.makeIterator())) == [1, 2]
+    }
+    
+    
+    func test_insertNodeIntoNonEmptyListAfterHead_shouldNotUpdateTail() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>([1, 3, 4])
+        let tail = list.tail
+        if let head = list.head { try list.insert(node: node, after: head) }
+        expect(list.tail) === tail
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterHead_shouldIncrementCounter() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>([1, 3, 4])
+        if let head = list.head { try list.insert(node: node, after: head) }
+        expect(list.count) == 4
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterHead_shouldContainElement() throws {
+        let node = LinkedListNode(2)
+        let list = LinkedListStorage<Int>([1, 3, 4])
+        if let head = list.head { try list.insert(node: node, after: head) }
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterTail_shouldUpdateTail() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        expect(list.tail) === node
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterTail_shouldIncrementCounter() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        expect(list.count) == 4
+    }
+    
+    func test_insertNodeIntoNonEmptyListAfterTail_shouldContainElement() throws {
+        let node = LinkedListNode(4)
+        let list = LinkedListStorage<Int>([1, 2, 3])
+        if let tail = list.tail { try list.insert(node: node, after: tail) }
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    // MARK: Test Insert Node Before
+    
+    func test_insertNodeIntoOneElementListBeforeHead_shouldUpdateHead() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>(2)
+        if let head = list.head { try list.insert(node: node, before: head) }
+        expect(list.head) === node
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeHead_shouldIncrementCounter() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>(2)
+        if let head = list.head { try list.insert(node: node, before: head) }
+        expect(list.count) == 2
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeHead_shouldContainElement() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>(2)
+        if let head = list.head { try list.insert(node: node, before: head) }
+        expect(Array(list.makeIterator())) == [1, 2]
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeTail_shouldUpdateHead() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>(2)
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        expect(list.head) === node
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeTail_shouldIncrementCounter() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>(2)
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        expect(list.count) == 2
+    }
+    
+    func test_insertNodeIntoOneElementListBeforeTail_shouldContainElement() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>(2)
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        expect(Array(list.makeIterator())) == [1, 2]
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeHead_shouldUpdateHead() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        if let head = list.head { try list.insert(node: node, before: head) }
+        expect(list.head) === node
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeHead_shouldIncrementCounter() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        if let head = list.head { try list.insert(node: node, before: head) }
+        expect(list.count) == 4
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeHead_shouldContainElement() throws {
+        let node = LinkedListNode(1)
+        let list = LinkedListStorage<Int>([2, 3, 4])
+        if let head = list.head { try list.insert(node: node, before: head) }
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeTail_shouldNotUpdateHead() throws {
+        let node = LinkedListNode(3)
+        let list = LinkedListStorage<Int>([1, 2, 4])
+        let head = list.head
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        expect(list.head) === head
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeTail_shouldIncrementCounter() throws {
+        let node = LinkedListNode(3)
+        let list = LinkedListStorage<Int>([1, 2, 4])
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        expect(list.count) == 4
+    }
+    
+    func test_insertNodeIntoNonEmptyListBeforeTail_shouldContainElement() throws {
+        let node = LinkedListNode(3)
+        let list = LinkedListStorage<Int>([1, 2, 4])
+        if let tail = list.tail { try list.insert(node: node, before: tail) }
+        expect(Array(list.makeIterator())) == [1, 2, 3, 4]
+    }
+    
+    // MARK: Test Remove Node
+    
+    func test_removeNodeFromOneElementList_shouldResetHead() throws {
+        let list = LinkedListStorage<Int>(1)
+        if let node = list.head { try list.remove(node: node) }
+        expect(list.head).to(beNil())
+    }
+    
+    func test_removeNodeFromOneElementList_shouldResetTail() throws {
+        let list = LinkedListStorage<Int>(1)
+        if let node = list.head { try list.remove(node: node) }
+        expect(list.tail).to(beNil())
+    }
+    
+    func test_removeNodeFromOneElementList_shouldDecrementCounter() throws {
+        let list = LinkedListStorage<Int>(1)
+        if let node = list.head { try list.remove(node: node) }
+        expect(list.count) == 0
+    }
+    
+    func test_removeNodeFromOneElementList_shouldNotContainElement() throws {
+        let list = LinkedListStorage<Int>(1)
+        if let node = list.head { try list.remove(node: node) }
+        expect(Array(list.makeIterator())) == []
+    }
+    
+    func test_removeFirstNodeFromNonEmptyList_shouldUpdateHead() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        let head = list.head
+        if let node = list.head { try list.remove(node: node) }
+        expect(list.head) !== head
+    }
+    
+    func test_removeFirstNodeFromNonEmptyList_shouldNotUpdateTail() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        let tail = list.tail
+        if let node = list.head { try list.remove(node: node) }
+        expect(list.tail) === tail
+    }
+    
+    func test_removeFirstNodeFromNonEmptyList_shouldDecrementCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        if let node = list.head { try list.remove(node: node) }
+        expect(list.count) == 3
+    }
+    
+    func test_removeFirstNodeFromNonEmptyList_shouldNotContainElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        if let node = list.head { try list.remove(node: node) }
+        expect(Array(list.makeIterator())) == [2, 3, 4]
+    }
+    
+    func test_removeLastNodeFromNonEmptyList_shouldNotUpdateHead() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        let head = list.head
+        if let node = list.tail { try list.remove(node: node) }
+        expect(list.head) === head
+    }
+    
+    func test_removeLastNodeFromNonEmptyList_shouldUpdateTail() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        let tail = list.tail
+        if let node = list.tail { try list.remove(node: node) }
+        expect(list.tail) !== tail
+    }
+    
+    func test_removeLastNodeFromNonEmptyList_shouldDecrementCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        if let node = list.tail { try list.remove(node: node) }
+        expect(list.count) == 3
+    }
+    
+    func test_removeLastNodeFromNonEmptyList_shouldNotContainElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        if let node = list.tail { try list.remove(node: node) }
+        expect(Array(list.makeIterator())) == [1, 2, 3]
+    }
+    
+    func test_removeMiddleNodeFromNonEmptyList_shouldNotUpdateHead() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        let head = list.head
+        if let node = list.head?.next { try list.remove(node: node) }
+        expect(list.head) === head
+    }
+    
+    func test_removeMiddleNodeFromNonEmptyList_shouldNotUpdateTail() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        let tail = list.tail
+        if let node = list.head?.next { try list.remove(node: node) }
+        expect(list.tail) === tail
+    }
+    
+    func test_removeMiddleNodeFromNonEmptyList_shouldDecrementCounter() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        if let node = list.head?.next { try list.remove(node: node) }
+        expect(list.count) == 3
+    }
+    
+    func test_removeMiddleNodeFromNonEmptyList_shouldNotContainElement() throws {
+        let list = LinkedListStorage<Int>([1, 2, 3, 4])
+        if let node = list.head?.next { try list.remove(node: node) }
+        expect(Array(list.makeIterator())) == [1, 3, 4]
+    }
+    
+    // MARK: Test Elements
+    
     func test_insertOnEmptyList_shouldPass() throws {
         let list = LinkedListStorage<Int>()
         try list.insert(1, at: 0)
