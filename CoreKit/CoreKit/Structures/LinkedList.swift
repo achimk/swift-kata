@@ -26,11 +26,19 @@ open class LinkedListNode<T> {
 
 extension LinkedListNode {
     
-    public func makeForewardIterator() -> ForewardNodeIterator<T> {
+    public func makeForewardIterator() -> ForewardNodeElementIterator<T> {
+        return ForewardNodeElementIterator(self)
+    }
+    
+    public func makeForewardNodeIterator() -> ForewardNodeIterator<T> {
         return ForewardNodeIterator(self)
     }
     
-    public func makeBackwardIterator() -> BackwardNodeIterator<T> {
+    public func makeBackwardIterator() -> BackwardNodeElementIterator<T> {
+        return BackwardNodeElementIterator(self)
+    }
+    
+    public func makeBackwardNodeIterator() -> BackwardNodeIterator<T> {
         return BackwardNodeIterator(self)
     }
 }
@@ -38,6 +46,21 @@ extension LinkedListNode {
 // MARK: - ForewardNodeIterator
 
 public struct ForewardNodeIterator<T>: IteratorProtocol, Sequence {
+    
+    private var node: LinkedListNode<T>?
+    
+    public init(_ node: LinkedListNode<T>?) {
+        self.node = node
+    }
+    
+    public mutating func next() -> LinkedListNode<T>? {
+        let current = node
+        self.node = node?.next
+        return current
+    }
+}
+
+public struct ForewardNodeElementIterator<T>: IteratorProtocol, Sequence {
     
     private var node: LinkedListNode<T>?
     
@@ -55,6 +78,21 @@ public struct ForewardNodeIterator<T>: IteratorProtocol, Sequence {
 // MARK: - BackwardNodeIterator
 
 public struct BackwardNodeIterator<T>: IteratorProtocol, Sequence {
+    
+    private var node: LinkedListNode<T>?
+    
+    public init(_ node: LinkedListNode<T>?) {
+        self.node = node
+    }
+    
+    public mutating func next() -> LinkedListNode<T>? {
+        let current = node
+        self.node = node?.previous
+        return current
+    }
+}
+
+public struct BackwardNodeElementIterator<T>: IteratorProtocol, Sequence {
     
     private var node: LinkedListNode<T>?
     
@@ -215,12 +253,12 @@ extension LinkedList: RandomAccessCollection { }
 
 extension LinkedList {
     
-    public func makeForewardIterator() -> ForewardNodeIterator<T> {
-        return ForewardNodeIterator(head)
+    public func makeForewardIterator() -> ForewardNodeElementIterator<T> {
+        return ForewardNodeElementIterator(head)
     }
     
-    public func makeBackwardIterator() -> BackwardNodeIterator<T> {
-        return BackwardNodeIterator(tail)
+    public func makeBackwardIterator() -> BackwardNodeElementIterator<T> {
+        return BackwardNodeElementIterator(tail)
     }
 }
 
@@ -396,7 +434,9 @@ extension LinkedListStorage {
         
         var count = 0
         let it = ForewardNodeIterator(node.next)
-        it.forEach { _ in count = count.advanced(by: 1) }
+        it.forEach { node in
+            count = count.advanced(by: 1)
+        }
         
         counter = counter - count
         node.next = nil
@@ -408,7 +448,9 @@ extension LinkedListStorage {
         
         var count = 0
         let it = BackwardNodeIterator(node.previous)
-        it.forEach { _ in count = count.advanced(by: 1) }
+        it.forEach { node in
+            count = count.advanced(by: 1)
+        }
         
         counter = counter - count
         node.previous = nil
@@ -565,6 +607,12 @@ extension LinkedListStorage: Collection {
 // MARK: - LinkedListStorage (Private)
 
 extension LinkedListStorage {
+    
+    fileprivate func clearNode(_ node: Node) {
+        node.parent = nil
+        node.next = nil
+        node.previous = nil
+    }
     
     fileprivate func createNode(_ value: T) -> Node {
         let node = Node(value)
